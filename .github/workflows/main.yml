@@ -22,7 +22,9 @@ jobs:
         emsdk\emsdk install sdk-1.39.4-64bit
         emsdk\emsdk activate sdk-1.39.4-64bit
     - name: Build exorbitant
-      run: emmake make build
+      run: |
+        emsdk\emsdk_env.ps1
+        emmake make build
     - name: Upload binaries
       uses: actions/upload-artifact@v1
       with:
