@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v1
@@ -20,7 +20,7 @@ jobs:
         emsdk\emsdk install sdk-1.39.4-64bit
         emsdk\emsdk activate sdk-1.39.4-64bit
     - name: Build exorbitant
-        run: emmake make build
+      run: emmake make build
     - name: Upload binaries
       uses: actions/upload-artifact@v1
       with:
