@@ -1,0 +1,28 @@
+name: exorbitant ci
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: windows-2019
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+    - name: Install gnu tools
+      run: |
+        chocolatey install make
+        chocolatey install gnuwin32-coreutils.portable
+    - name: Install emscripten
+      run: |
+        emsdk\emsdk install sdk-1.39.4-64bit
+        emsdk\emsdk activate sdk-1.39.4-64bit
+    - name: Build exorbitant
+        run: emmake make build
+    - name: Upload binaries
+      uses: actions/upload-artifact@v1
+      with:
+        name: dist
+        path: ./dist
