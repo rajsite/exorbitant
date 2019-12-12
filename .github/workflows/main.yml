@@ -11,10 +11,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v1
+      with:
+        submodules: true
     - name: Install gnu tools
       run: |
-        chocolatey install make
-        chocolatey install gnuwin32-coreutils.portable
+        chocolatey install make -y
+        chocolatey install gnuwin32-coreutils.portable -y
     - name: Install emscripten
       run: |
         emsdk\emsdk install sdk-1.39.4-64bit
