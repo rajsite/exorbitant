@@ -7,3 +7,6 @@
 [submodule "imports/exprtk"]
 	path = imports/exprtk
 	url = https://github.com/ArashPartow/exprtk.git
+[submodule "armadillo-code"]
+	path = armadillo-code
+	url = https://gitlab.com/conradsnicta/armadillo-code.git
