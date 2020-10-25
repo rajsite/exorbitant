@@ -1,0 +1,18 @@
+[package]
+name = "rajsite/exorbitant"
+version = "0.0.1"
+description = "Web calculator library"
+license = "MIT"
+repository = "git+https://github.com/rajsite/exorbitant.git"
+
+[[module]]
+name = "exorbitant"
+source = "dist/exorbitant.wasm"
+abi = "wasi"
+
+[module.interfaces]
+wasi = "0.0.0-unstable"
+
+[[command]]
+name = "exorbitant"
+module = "exorbitant"

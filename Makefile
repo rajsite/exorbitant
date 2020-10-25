@@ -17,7 +17,7 @@ $(DIST):
 	@$(MKDIR) -p $(DIST)
 
 $(DIST)/exorbitant.js : | $(DIST)
-	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) -o $(DIST)/exorbitant.js source/main.cpp $(LINKER_OPT)
+	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) -o $(DIST)/exorbitant.js imports/exprtk-extras/exprtk_calc.cpp $(LINKER_OPT)
 
 .PHONY : build
 
