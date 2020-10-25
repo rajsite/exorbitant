@@ -2,7 +2,7 @@
   "name": "exorbitant",
   "version": "0.0.1",
   "description": "Web calculator library",
-  "main": "index.js",
+  "main": "dist/exorbitant.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/rajsite/exorbitant/issues"
   },
-  "homepage": "https://github.com/rajsite/exorbitant#readme"
+  "homepage": "https://github.com/rajsite/exorbitant#readme",
+  "files": [
+    "dist/*"
+  ]
 }

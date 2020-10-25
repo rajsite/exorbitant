@@ -16,9 +16,9 @@ DIST              := dist
 $(DIST):
 	@$(MKDIR) -p $(DIST)
 
-$(DIST)/main.js : | $(DIST)
-	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) -o $(DIST)/main.js source/main.cpp $(LINKER_OPT)
+$(DIST)/exorbitant.js : | $(DIST)
+	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) -o $(DIST)/exorbitant.js source/main.cpp $(LINKER_OPT)
 
 .PHONY : build
 
-build : $(DIST)/main.js
+build : $(DIST)/exorbitant.js

@@ -25,8 +25,9 @@ jobs:
       run: |
         imports\emsdk\emsdk_env.ps1
         emmake make build
+        npm pack
     - name: Upload binaries
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
-        name: dist
-        path: ./dist
+        name: exorbitant archive
+        path: ./exorbitant-*.tgz
