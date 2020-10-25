@@ -1,3 +1,3 @@
-[submodule "emsdk"]
-	path = emsdk
+[submodule "imports/emsdk"]
+	path = imports/emsdk
 	url = https://github.com/emscripten-core/emsdk.git

@@ -19,11 +19,11 @@ jobs:
         chocolatey install gnuwin32-coreutils.portable -y
     - name: Install emscripten
       run: |
-        emsdk\emsdk install sdk-1.39.4-64bit
-        emsdk\emsdk activate sdk-1.39.4-64bit
+        imports\emsdk\emsdk install sdk-1.39.4-64bit
+        imports\emsdk\emsdk activate sdk-1.39.4-64bit
     - name: Build exorbitant
       run: |
-        emsdk\emsdk_env.ps1
+        imports\emsdk\emsdk_env.ps1
         emmake make build
     - name: Upload binaries
       uses: actions/upload-artifact@v1
