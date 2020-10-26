@@ -1,9 +1,6 @@
 [submodule "imports/emsdk"]
 	path = imports/emsdk
 	url = https://github.com/emscripten-core/emsdk.git
-[submodule "imports/exprtk-extras"]
-	path = imports/exprtk-extras
-	url = https://github.com/ArashPartow/exprtk-extras.git
 [submodule "imports/exprtk"]
 	path = imports/exprtk
 	url = https://github.com/ArashPartow/exprtk.git

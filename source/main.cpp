@@ -2,8 +2,8 @@
  **************************************************************
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
- * Simple Example 1                                           *
- * Author: Arash Partow (1999-2019)                           *
+ * ExprTk Simple Calculator Example                           *
+ * Author: Arash Partow (1999-2020)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -17,42 +17,78 @@
 
 
 #include <cstdio>
+#include <iostream>
 #include <string>
 
 #include "exprtk.hpp"
 
 
-template <typename T>
-void trig_function()
-{
-   typedef exprtk::symbol_table<T> symbol_table_t;
-   typedef exprtk::expression<T>     expression_t;
-   typedef exprtk::parser<T>             parser_t;
-
-   const std::string expression_string =
-                     "clamp(-1.0,sin(2 * pi * x) + cos(x / 2 * pi),+1.0)";
-
-   T x;
-
-   symbol_table_t symbol_table;
-   symbol_table.add_variable("x",x);
-   symbol_table.add_constants();
-
-   expression_t expression;
-   expression.register_symbol_table(symbol_table);
-
-   parser_t parser;
-   parser.compile(expression_string,expression);
-
-   for (x = T(-5); x <= T(+5); x += T(0.1))
-   {
-      const T y = expression.value();
-      printf("%19.15f\t%19.15f\n", x, y);
-   }
-}
-
 int main()
 {
-   trig_function<double>();
+   typedef exprtk::symbol_table<double> symbol_table_t;
+   typedef exprtk::expression<double>     expression_t;
+   typedef exprtk::parser<double>             parser_t;
+   typedef exprtk::parser_error::type          error_t;
+
+   for ( ; ; )
+   {
+      double x = 1.0;
+      double y = 2.0;
+      double z = 3.0;
+      double w = 4.0;
+      double u = 5.0;
+      double v = 6.0;
+
+      symbol_table_t symbol_table;
+      symbol_table.add_variable("x",x);
+      symbol_table.add_variable("y",y);
+      symbol_table.add_variable("z",z);
+      symbol_table.add_variable("w",w);
+      symbol_table.add_variable("u",u);
+      symbol_table.add_variable("v",v);
+      symbol_table.add_constants();
+
+      expression_t expression;
+      expression.register_symbol_table(symbol_table);
+
+      std::string expression_str;
+
+      std::cout << ">> ";
+      std::getline(std::cin,expression_str);
+
+      if (expression_str.empty())
+         continue;
+      else if ("exit" == expression_str)
+         break;
+      else if ("quit" == expression_str)
+         break;
+
+      parser_t parser;
+
+      if (!parser.compile(expression_str,expression))
+      {
+         printf("Error: %s\tExpression: %s\n",
+                parser.error().c_str(),
+                expression_str.c_str());
+
+         for (std::size_t i = 0; i < parser.error_count(); ++i)
+         {
+            error_t error = parser.get_error(i);
+            printf("Err: %02d Pos: %02d Type: [%14s] Msg: %s\tExpression: %s\n",
+                   static_cast<unsigned int>(i),
+                   static_cast<unsigned int>(error.token.position),
+                   exprtk::parser_error::to_str(error.mode).c_str(),
+                   error.diagnostic.c_str(),
+                   expression_str.c_str());
+         }
+
+         continue;
+      }
+
+      double result = expression.value();
+
+      printf("result: %20.10f\n",result);
+   }
+
    return 0;
 }
