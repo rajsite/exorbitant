@@ -15,13 +15,23 @@
  **************************************************************
 */
 
+#define ARMA_DONT_USE_LAPACK
+#define ARMA_DONT_USE_BLAS
+#define ARMA_DONT_USE_NEWARP
+#define ARMA_DONT_USE_ARPACK
+#define ARMA_DONT_USE_SUPERLU
+#define ARMA_DONT_USE_HDF5
+#define ARMA_DONT_USE_OPENMP
 
 #include <cstdio>
 #include <iostream>
 #include <string>
 
 #include "exprtk.hpp"
+#include "sigpack.h"
 
+using namespace arma;
+using namespace sp;
 
 int main()
 {

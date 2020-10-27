@@ -3,14 +3,15 @@
 MKDIR="mkdir"
 
 COMPILER          := emcc
+BASE_OPTIONS      := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long
+EM_OPT            := -s STANDALONE_WASM
 OPTIMIZATION_OPT  := -O3
-BASE_OPTIONS      := -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -s STANDALONE_WASM
-OPTIONS           := $(BASE_OPTIONS) $(OPTIMIZATION_OPT)
+OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(OPTIMIZATION_OPT)
 LINKER_OPT        := -lm
 EXPRTK_INCLUDE    := imports/exprtk/
 ARMADILLO_INCLUDE := imports/armadillo-code/include/
 SIGPACK_INCLUDE   := imports/sigpack/sigpack/
-DEPS_INCLUDE      := -I$(EXPRTK_INCLUDE) -I$(ARMADILLO_INCLUDE) -I$(SIGPACK_INCLUDE)
+DEPS_INCLUDE      := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -isystem $(SIGPACK_INCLUDE)
 DIST              := dist
 SOURCE            := source/main.cpp
 
