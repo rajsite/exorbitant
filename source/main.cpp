@@ -30,24 +30,18 @@ int main()
    typedef exprtk::parser<double>             parser_t;
    typedef exprtk::parser_error::type          error_t;
 
+   double x = 1.0;
+   double y = 2.0;
+   double z = 3.0;
+
+   symbol_table_t symbol_table;
+   symbol_table.add_variable("x",x);
+   symbol_table.add_variable("y",y);
+   symbol_table.add_variable("z",z);
+   symbol_table.add_constants();
+
    for ( ; ; )
    {
-      double x = 1.0;
-      double y = 2.0;
-      double z = 3.0;
-      double w = 4.0;
-      double u = 5.0;
-      double v = 6.0;
-
-      symbol_table_t symbol_table;
-      symbol_table.add_variable("x",x);
-      symbol_table.add_variable("y",y);
-      symbol_table.add_variable("z",z);
-      symbol_table.add_variable("w",w);
-      symbol_table.add_variable("u",u);
-      symbol_table.add_variable("v",v);
-      symbol_table.add_constants();
-
       expression_t expression;
       expression.register_symbol_table(symbol_table);
 
@@ -58,9 +52,9 @@ int main()
 
       if (expression_str.empty())
          continue;
-      else if ("exit" == expression_str)
+      else if (expression_str.find("exit") == 0)
          break;
-      else if ("quit" == expression_str)
+      else if (expression_str.find("quit") == 0)
          break;
 
       parser_t parser;

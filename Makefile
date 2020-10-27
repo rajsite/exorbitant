@@ -12,12 +12,13 @@ ARMADILLO_INCLUDE := imports/armadillo-code/include/
 SIGPACK_INCLUDE   := imports/sigpack/sigpack/
 DEPS_INCLUDE      := -I$(EXPRTK_INCLUDE) -I$(ARMADILLO_INCLUDE) -I$(SIGPACK_INCLUDE)
 DIST              := dist
+SOURCE            := source/main.cpp
 
 $(DIST):
 	@$(MKDIR) -p $(DIST)
 
-$(DIST)/exorbitant.js : | $(DIST)
-	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) -o $(DIST)/exorbitant.js source/main.cpp $(LINKER_OPT)
+$(DIST)/exorbitant.js : $(SOURCE) | $(DIST)
+	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
 .PHONY : build
 
