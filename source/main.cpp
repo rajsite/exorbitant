@@ -27,11 +27,68 @@
 #include <iostream>
 #include <string>
 
-#include "exprtk.hpp"
+#include <armadillo>
 #include "sigpack.h"
+#include "exprtk.hpp"
 
 using namespace arma;
 using namespace sp;
+
+template <typename T>
+struct fir1_sig_generic : public exprtk::igeneric_function<T>
+{
+   typedef typename exprtk::igeneric_function<T> igfun_t;
+   typedef typename igfun_t::parameter_list_t    parameter_list_t;
+   typedef typename igfun_t::generic_type        generic_type;
+   typedef typename generic_type::scalar_view    scalar_t;
+   typedef typename generic_type::vector_view    vector_t;
+
+   fir1_sig_generic() : exprtk::igeneric_function<T>("TTV") {}
+
+   inline T operator() (parameter_list_t parameters)
+   {
+      scalar_t order(parameters[0]);
+      scalar_t cutOffFrequency(parameters[1]);
+      vector_t coefficients(parameters[2]);
+
+      vec M = fir1(static_cast<int>(order()), cutOffFrequency());
+      // TODO can we vector_t rebase into coefficients instead of copy?
+      for (std::size_t i = 0; i < coefficients.size(); i++)
+      {
+         coefficients[i] = M[i];
+      }
+      return T(0);
+   }
+};
+
+template <typename T>
+struct conv_sig_generic : public exprtk::igeneric_function<T>
+{
+   typedef typename exprtk::igeneric_function<T> igfun_t;
+   typedef typename igfun_t::parameter_list_t    parameter_list_t;
+   typedef typename igfun_t::generic_type        generic_type;
+   typedef typename generic_type::scalar_view    scalar_t;
+   typedef typename generic_type::vector_view    vector_t;
+
+   conv_sig_generic() : exprtk::igeneric_function<T>("VVV") {}
+
+   inline T operator() (parameter_list_t parameters)
+   {
+      vector_t A_in(parameters[0]);
+      vector_t B_in(parameters[1]);
+      vector_t RESULT(parameters[2]);
+
+      vec A(A_in.begin(), A_in.size());
+      vec B(B_in.begin(), B_in.size());
+      vec C = conv(A, B);
+      for (std::size_t i = 0; i < A.size() + B.size() - 1; i++)
+      {
+         RESULT[i] = C[i];
+      }
+      return T(0);
+   }
+};
+
 
 int main()
 {
@@ -40,14 +97,22 @@ int main()
    typedef exprtk::parser<double>             parser_t;
    typedef exprtk::parser_error::type          error_t;
 
-   double x = 1.0;
-   double y = 2.0;
-   double z = 3.0;
+   exprtk::rtl::vecops::package<double> vecops_package;
+   exprtk::rtl::io::package<double> io_package;
 
    symbol_table_t symbol_table;
+   symbol_table.add_package(vecops_package);
+   symbol_table.add_package(io_package);
+   double x = 0.0;
    symbol_table.add_variable("x",x);
+   double y = 0.0;
    symbol_table.add_variable("y",y);
+   double z = 0.0;
    symbol_table.add_variable("z",z);
+   fir1_sig_generic<double> fir1_sig;
+   symbol_table.add_function("fir1", fir1_sig);
+   conv_sig_generic<double> conv_sig;
+   symbol_table.add_function("conv", conv_sig);
    symbol_table.add_constants();
 
    for ( ; ; )
