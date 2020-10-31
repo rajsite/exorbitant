@@ -27,6 +27,8 @@
 #include <iostream>
 #include <string>
 
+#include <emscripten.h>
+#define EXPORT extern "C" EMSCRIPTEN_KEEPALIVE
 #include <armadillo>
 #include "sigpack.h"
 #include "exprtk.hpp"
@@ -34,7 +36,9 @@
 using namespace arma;
 using namespace sp;
 
-struct fir1_sig_generic : public exprtk::igeneric_function<double>
+namespace exorbitant
+{
+struct fir1 : public exprtk::igeneric_function<double>
 {
    typedef typename exprtk::igeneric_function<double> igfun_t;
    typedef typename igfun_t::parameter_list_t    parameter_list_t;
@@ -42,7 +46,7 @@ struct fir1_sig_generic : public exprtk::igeneric_function<double>
    typedef typename generic_type::scalar_view    scalar_t;
    typedef typename generic_type::vector_view    vector_t;
 
-   fir1_sig_generic() : exprtk::igeneric_function<double>("TTV") {}
+   fir1() : exprtk::igeneric_function<double>("TTV") {}
 
    inline double operator() (parameter_list_t parameters)
    {
@@ -50,14 +54,14 @@ struct fir1_sig_generic : public exprtk::igeneric_function<double>
       scalar_t cutOffFrequency(parameters[1]);
       vector_t coefficients(parameters[2]);
 
-      vec M = fir1(static_cast<int>(order()), cutOffFrequency());
+      vec M = sp::fir1(static_cast<int>(order()), cutOffFrequency());
 
       memcpy(coefficients.begin(), M.memptr(), std::min((size_t)M.size(), coefficients.size()) * sizeof(double));
       return 0;
    }
 };
 
-struct conv_sig_generic : public exprtk::igeneric_function<double>
+struct conv : public exprtk::igeneric_function<double>
 {
    typedef typename exprtk::igeneric_function<double> igfun_t;
    typedef typename igfun_t::parameter_list_t    parameter_list_t;
@@ -65,7 +69,7 @@ struct conv_sig_generic : public exprtk::igeneric_function<double>
    typedef typename generic_type::scalar_view    scalar_t;
    typedef typename generic_type::vector_view    vector_t;
 
-   conv_sig_generic() : exprtk::igeneric_function<double>("VVV") {}
+   conv() : exprtk::igeneric_function<double>("VVV") {}
 
    inline double operator() (parameter_list_t parameters)
    {
@@ -76,13 +80,35 @@ struct conv_sig_generic : public exprtk::igeneric_function<double>
       vec A(A_in.begin(), A_in.size(), false, true);
       vec B(B_in.begin(), B_in.size(), false, true);
 
-      vec C = conv(A, B);
+      vec C = arma::conv(A, B);
 
       memcpy(RESULT.begin(), C.memptr(), std::min((size_t)C.size(), RESULT.size()) * sizeof(double));
       return 0;
    }
 };
+}
 
+extern "C" {
+   extern void* createSymbolTable();
+}
+
+EXPORT void* createSymbolTable() {
+   typedef exprtk::symbol_table<double>            symbol_table_t;
+   typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
+   typedef exprtk::rtl::io::package<double>        io_package_t;
+
+   symbol_table_t* symbol_table = new symbol_table_t();
+   symbol_table->add_constants();
+   vecops_package_t* vecops_package = new vecops_package_t();
+   symbol_table->add_package(*vecops_package);
+   io_package_t* io_package = new io_package_t();
+   symbol_table->add_package(*io_package);
+   exorbitant::fir1* fir1_function = new exorbitant::fir1();
+   symbol_table->add_function("fir1", *fir1_function);
+   exorbitant::conv* conv_function = new exorbitant::conv();
+   symbol_table->add_function("conv", *conv_function);
+   return (void*) symbol_table;
+}
 
 int main()
 {
@@ -103,9 +129,9 @@ int main()
    symbol_table.add_variable("y",y);
    double z = 0.0;
    symbol_table.add_variable("z",z);
-   fir1_sig_generic fir1_sig;
+   exorbitant::fir1 fir1_sig;
    symbol_table.add_function("fir1", fir1_sig);
-   conv_sig_generic conv_sig;
+   exorbitant::conv conv_sig;
    symbol_table.add_function("conv", conv_sig);
    symbol_table.add_constants();
 
