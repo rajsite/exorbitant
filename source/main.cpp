@@ -38,6 +38,12 @@ using namespace sp;
 
 namespace exorbitant
 {
+   #ifdef exprtk_enable_debugging
+     #define exprtk_debug(params) printf params
+   #else
+     #define exprtk_debug(params) (void)0
+   #endif
+
    struct fir1 : public exprtk::igeneric_function<double>
    {
       typedef typename exprtk::igeneric_function<double> igfun_t;
@@ -54,10 +60,10 @@ namespace exorbitant
          scalar_t cutOffFrequency(parameters[1]);
          vector_t coefficients(parameters[2]);
 
-         vec M = sp::fir1(static_cast<int>(order()), cutOffFrequency());
+         vec b = sp::fir1(static_cast<int>(order()), cutOffFrequency());
 
-         memcpy(coefficients.begin(), M.memptr(), std::min((size_t)M.size(), coefficients.size()) * sizeof(double));
-         return 0;
+         memcpy(coefficients.begin(), b.memptr(), std::min((size_t)b.size(), coefficients.size()) * sizeof(double));
+         return 1;
       }
    };
 
@@ -73,20 +79,47 @@ namespace exorbitant
 
       inline double operator() (parameter_list_t parameters)
       {
-         vector_t A_in(parameters[0]);
-         vector_t B_in(parameters[1]);
-         vector_t RESULT(parameters[2]);
+         vector_t signal1(parameters[0]);
+         vector_t signal2(parameters[1]);
+         vector_t signalConv(parameters[2]);
 
-         vec A(A_in.begin(), A_in.size(), false, true);
-         vec B(B_in.begin(), B_in.size(), false, true);
+         vec A(signal1.begin(), signal1.size(), false, true);
+         vec B(signal2.begin(), signal2.size(), false, true);
 
          vec C = arma::conv(A, B);
 
-         memcpy(RESULT.begin(), C.memptr(), std::min((size_t)C.size(), RESULT.size()) * sizeof(double));
-         return 0;
+         memcpy(signalConv.begin(), C.memptr(), std::min((size_t)C.size(), signalConv.size()) * sizeof(double));
+         return 1;
       }
    };
-}
+
+   struct package
+   {
+      fir1 fir1_f;
+      conv conv_f;
+      bool register_package(exprtk::symbol_table<double>& symtab)
+      {
+         #define exprtk_register_function(FunctionName,FunctionType)                  \
+         if (!symtab.add_function(FunctionName,FunctionType))                         \
+         {                                                                            \
+            exprtk_debug((                                                            \
+              "exorbitant::register_package - Failed to add function: %s\n", \
+              FunctionName));                                                         \
+            return false;                                                             \
+         }                                                                            \
+
+         exprtk_register_function("fir1", fir1_f)
+         exprtk_register_function("conv", conv_f)
+         #undef exprtk_register_function
+
+         return true;
+      }
+   };
+
+   #ifdef exprtk_debug
+   #undef exprtk_debug
+   #endif
+} // namespace exorbitant
 
 extern "C" {
    extern void* createSymbolTable();
@@ -94,46 +127,48 @@ extern "C" {
 
 EXPORT void* createSymbolTable() {
    typedef exprtk::symbol_table<double>            symbol_table_t;
-   typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
+   typedef exorbitant::package                     exorbitant_package_t;
    typedef exprtk::rtl::io::package<double>        io_package_t;
+   typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
 
    symbol_table_t* symbol_table = new symbol_table_t();
-   symbol_table->add_constants();
-   vecops_package_t* vecops_package = new vecops_package_t();
-   symbol_table->add_package(*vecops_package);
+   exorbitant_package_t* exorbitant_package = new exorbitant_package_t();
    io_package_t* io_package = new io_package_t();
+   vecops_package_t* vecops_package = new vecops_package_t();
+
+   symbol_table->add_constants();
+   symbol_table->add_package(*exorbitant_package);
    symbol_table->add_package(*io_package);
-   exorbitant::fir1* fir1_function = new exorbitant::fir1();
-   symbol_table->add_function("fir1", *fir1_function);
-   exorbitant::conv* conv_function = new exorbitant::conv();
-   symbol_table->add_function("conv", *conv_function);
+   symbol_table->add_package(*vecops_package);
    return (void*) symbol_table;
 }
 
 int main()
 {
-   typedef exprtk::symbol_table<double> symbol_table_t;
-   typedef exprtk::expression<double>     expression_t;
-   typedef exprtk::parser<double>             parser_t;
-   typedef exprtk::parser_error::type          error_t;
+   typedef exprtk::symbol_table<double>            symbol_table_t;
+   typedef exorbitant::package                     exorbitant_package_t;
+   typedef exprtk::rtl::io::package<double>        io_package_t;
+   typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
 
-   exprtk::rtl::vecops::package<double> vecops_package;
-   exprtk::rtl::io::package<double> io_package;
+   typedef exprtk::expression<double>              expression_t;
+   typedef exprtk::parser<double>                  parser_t;
+   typedef exprtk::parser_error::type              error_t;
 
    symbol_table_t symbol_table;
-   symbol_table.add_package(vecops_package);
-   symbol_table.add_package(io_package);
+   exorbitant_package_t exorbitant_package;
+   io_package_t io_package;
+   vecops_package_t vecops_package;
    double x = 0.0;
-   symbol_table.add_variable("x",x);
    double y = 0.0;
-   symbol_table.add_variable("y",y);
    double z = 0.0;
-   symbol_table.add_variable("z",z);
-   exorbitant::fir1 fir1_sig;
-   symbol_table.add_function("fir1", fir1_sig);
-   exorbitant::conv conv_sig;
-   symbol_table.add_function("conv", conv_sig);
+
    symbol_table.add_constants();
+   symbol_table.add_package(exorbitant_package);
+   symbol_table.add_package(io_package);
+   symbol_table.add_package(vecops_package);
+   symbol_table.add_variable("x",x);
+   symbol_table.add_variable("y",y);
+   symbol_table.add_variable("z",z);
 
    for ( ; ; )
    {
