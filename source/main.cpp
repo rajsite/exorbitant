@@ -121,16 +121,27 @@ namespace exorbitant
    #endif
 } // namespace exorbitant
 
+typedef exprtk::symbol_table<double>            symbol_table_t;
+typedef exorbitant::package                     exorbitant_package_t;
+typedef exprtk::rtl::io::package<double>        io_package_t;
+typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
+
+typedef exprtk::expression<double>              expression_t;
+typedef exprtk::parser<double>                  parser_t;
+typedef exprtk::parser_error::type              error_t;
+
+//TODO switch to embind / webidl?
+
 extern "C" {
-   extern void* createSymbolTable();
+   extern symbol_table_t* SymbolTable_Create();
+   extern expression_t* Expression_Create();
+   extern void Expression_RegisterSymbolTable(expression_t* expression, symbol_table_t* symbol_table);
+   extern double Expression_Value(expression_t* expression);
+   extern parser_t* Parser_Create();
+   extern bool Parser_Compile(parser_t* parser, char* expression_cstr, expression_t* expression);
 }
 
-EXPORT void* createSymbolTable() {
-   typedef exprtk::symbol_table<double>            symbol_table_t;
-   typedef exorbitant::package                     exorbitant_package_t;
-   typedef exprtk::rtl::io::package<double>        io_package_t;
-   typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
-
+EXPORT symbol_table_t* SymbolTable_Create() {
    symbol_table_t* symbol_table = new symbol_table_t();
    exorbitant_package_t* exorbitant_package = new exorbitant_package_t();
    io_package_t* io_package = new io_package_t();
@@ -140,20 +151,36 @@ EXPORT void* createSymbolTable() {
    symbol_table->add_package(*exorbitant_package);
    symbol_table->add_package(*io_package);
    symbol_table->add_package(*vecops_package);
-   return (void*) symbol_table;
+   return symbol_table;
+}
+
+EXPORT expression_t* Expression_Create() {
+   expression_t* expression = new expression_t();
+   return expression;
+}
+
+EXPORT void Expression_RegisterSymbolTable(expression_t* expression, symbol_table_t* symbol_table) {
+   expression->register_symbol_table(*symbol_table);
+}
+
+EXPORT double Expression_Value(expression_t* expression) {
+   return expression->value();
+}
+
+EXPORT parser_t* Parser_Create() {
+   parser_t* parser = new parser_t();
+   return parser;
+}
+
+EXPORT bool Parser_Compile(parser_t* parser, char* expression_cstr, expression_t* expression) {
+   std::string expression_str(expression_cstr);
+   bool ret = parser->compile(expression_str, *expression);
+   // todo doesn't look like print() works inside expressions :(
+   return ret;
 }
 
 int main()
 {
-   typedef exprtk::symbol_table<double>            symbol_table_t;
-   typedef exorbitant::package                     exorbitant_package_t;
-   typedef exprtk::rtl::io::package<double>        io_package_t;
-   typedef exprtk::rtl::vecops::package<double>    vecops_package_t;
-
-   typedef exprtk::expression<double>              expression_t;
-   typedef exprtk::parser<double>                  parser_t;
-   typedef exprtk::parser_error::type              error_t;
-
    symbol_table_t symbol_table;
    exorbitant_package_t exorbitant_package;
    io_package_t io_package;
