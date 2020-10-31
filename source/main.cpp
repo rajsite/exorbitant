@@ -38,54 +38,54 @@ using namespace sp;
 
 namespace exorbitant
 {
-struct fir1 : public exprtk::igeneric_function<double>
-{
-   typedef typename exprtk::igeneric_function<double> igfun_t;
-   typedef typename igfun_t::parameter_list_t    parameter_list_t;
-   typedef typename igfun_t::generic_type        generic_type;
-   typedef typename generic_type::scalar_view    scalar_t;
-   typedef typename generic_type::vector_view    vector_t;
-
-   fir1() : exprtk::igeneric_function<double>("TTV") {}
-
-   inline double operator() (parameter_list_t parameters)
+   struct fir1 : public exprtk::igeneric_function<double>
    {
-      scalar_t order(parameters[0]);
-      scalar_t cutOffFrequency(parameters[1]);
-      vector_t coefficients(parameters[2]);
+      typedef typename exprtk::igeneric_function<double> igfun_t;
+      typedef typename igfun_t::parameter_list_t    parameter_list_t;
+      typedef typename igfun_t::generic_type        generic_type;
+      typedef typename generic_type::scalar_view    scalar_t;
+      typedef typename generic_type::vector_view    vector_t;
 
-      vec M = sp::fir1(static_cast<int>(order()), cutOffFrequency());
+      fir1() : exprtk::igeneric_function<double>("TTV") {}
 
-      memcpy(coefficients.begin(), M.memptr(), std::min((size_t)M.size(), coefficients.size()) * sizeof(double));
-      return 0;
-   }
-};
+      inline double operator() (parameter_list_t parameters)
+      {
+         scalar_t order(parameters[0]);
+         scalar_t cutOffFrequency(parameters[1]);
+         vector_t coefficients(parameters[2]);
 
-struct conv : public exprtk::igeneric_function<double>
-{
-   typedef typename exprtk::igeneric_function<double> igfun_t;
-   typedef typename igfun_t::parameter_list_t    parameter_list_t;
-   typedef typename igfun_t::generic_type        generic_type;
-   typedef typename generic_type::scalar_view    scalar_t;
-   typedef typename generic_type::vector_view    vector_t;
+         vec M = sp::fir1(static_cast<int>(order()), cutOffFrequency());
 
-   conv() : exprtk::igeneric_function<double>("VVV") {}
+         memcpy(coefficients.begin(), M.memptr(), std::min((size_t)M.size(), coefficients.size()) * sizeof(double));
+         return 0;
+      }
+   };
 
-   inline double operator() (parameter_list_t parameters)
+   struct conv : public exprtk::igeneric_function<double>
    {
-      vector_t A_in(parameters[0]);
-      vector_t B_in(parameters[1]);
-      vector_t RESULT(parameters[2]);
+      typedef typename exprtk::igeneric_function<double> igfun_t;
+      typedef typename igfun_t::parameter_list_t    parameter_list_t;
+      typedef typename igfun_t::generic_type        generic_type;
+      typedef typename generic_type::scalar_view    scalar_t;
+      typedef typename generic_type::vector_view    vector_t;
 
-      vec A(A_in.begin(), A_in.size(), false, true);
-      vec B(B_in.begin(), B_in.size(), false, true);
+      conv() : exprtk::igeneric_function<double>("VVV") {}
 
-      vec C = arma::conv(A, B);
+      inline double operator() (parameter_list_t parameters)
+      {
+         vector_t A_in(parameters[0]);
+         vector_t B_in(parameters[1]);
+         vector_t RESULT(parameters[2]);
 
-      memcpy(RESULT.begin(), C.memptr(), std::min((size_t)C.size(), RESULT.size()) * sizeof(double));
-      return 0;
-   }
-};
+         vec A(A_in.begin(), A_in.size(), false, true);
+         vec B(B_in.begin(), B_in.size(), false, true);
+
+         vec C = arma::conv(A, B);
+
+         memcpy(RESULT.begin(), C.memptr(), std::min((size_t)C.size(), RESULT.size()) * sizeof(double));
+         return 0;
+      }
+   };
 }
 
 extern "C" {
