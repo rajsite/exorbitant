@@ -4,7 +4,7 @@ MKDIR="mkdir"
 
 COMPILER          := emcc
 BASE_OPTIONS      := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long
-EM_OPT            := -s STANDALONE_WASM
+EM_OPT            := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=0
 OPTIMIZATION_OPT  := -O3
 OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(OPTIMIZATION_OPT)
 LINKER_OPT        := -lm

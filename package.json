@@ -2,10 +2,8 @@
   "name": "exorbitant",
   "version": "0.0.3",
   "description": "Web calculator library",
-  "main": "dist/exorbitant.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "source/exorbitant.js",
+  "module": "source/exorbitant.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rajsite/exorbitant.git"
@@ -17,6 +15,7 @@
   },
   "homepage": "https://github.com/rajsite/exorbitant#readme",
   "files": [
-    "dist/*"
+    "dist/*",
+    "source/exorbitant.js"
   ]
 }
