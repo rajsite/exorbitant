@@ -34,58 +34,52 @@
 using namespace arma;
 using namespace sp;
 
-template <typename T>
-struct fir1_sig_generic : public exprtk::igeneric_function<T>
+struct fir1_sig_generic : public exprtk::igeneric_function<double>
 {
-   typedef typename exprtk::igeneric_function<T> igfun_t;
+   typedef typename exprtk::igeneric_function<double> igfun_t;
    typedef typename igfun_t::parameter_list_t    parameter_list_t;
    typedef typename igfun_t::generic_type        generic_type;
    typedef typename generic_type::scalar_view    scalar_t;
    typedef typename generic_type::vector_view    vector_t;
 
-   fir1_sig_generic() : exprtk::igeneric_function<T>("TTV") {}
+   fir1_sig_generic() : exprtk::igeneric_function<double>("TTV") {}
 
-   inline T operator() (parameter_list_t parameters)
+   inline double operator() (parameter_list_t parameters)
    {
       scalar_t order(parameters[0]);
       scalar_t cutOffFrequency(parameters[1]);
       vector_t coefficients(parameters[2]);
 
       vec M = fir1(static_cast<int>(order()), cutOffFrequency());
-      // TODO can we vector_t rebase into coefficients instead of copy?
-      for (std::size_t i = 0; i < coefficients.size(); i++)
-      {
-         coefficients[i] = M[i];
-      }
-      return T(0);
+
+      memcpy(coefficients.begin(), M.memptr(), std::min((size_t)M.size(), coefficients.size()) * sizeof(double));
+      return 0;
    }
 };
 
-template <typename T>
-struct conv_sig_generic : public exprtk::igeneric_function<T>
+struct conv_sig_generic : public exprtk::igeneric_function<double>
 {
-   typedef typename exprtk::igeneric_function<T> igfun_t;
+   typedef typename exprtk::igeneric_function<double> igfun_t;
    typedef typename igfun_t::parameter_list_t    parameter_list_t;
    typedef typename igfun_t::generic_type        generic_type;
    typedef typename generic_type::scalar_view    scalar_t;
    typedef typename generic_type::vector_view    vector_t;
 
-   conv_sig_generic() : exprtk::igeneric_function<T>("VVV") {}
+   conv_sig_generic() : exprtk::igeneric_function<double>("VVV") {}
 
-   inline T operator() (parameter_list_t parameters)
+   inline double operator() (parameter_list_t parameters)
    {
       vector_t A_in(parameters[0]);
       vector_t B_in(parameters[1]);
       vector_t RESULT(parameters[2]);
 
-      vec A(A_in.begin(), A_in.size());
-      vec B(B_in.begin(), B_in.size());
+      vec A(A_in.begin(), A_in.size(), false, true);
+      vec B(B_in.begin(), B_in.size(), false, true);
+
       vec C = conv(A, B);
-      for (std::size_t i = 0; i < A.size() + B.size() - 1; i++)
-      {
-         RESULT[i] = C[i];
-      }
-      return T(0);
+
+      memcpy(RESULT.begin(), C.memptr(), std::min((size_t)C.size(), RESULT.size()) * sizeof(double));
+      return 0;
    }
 };
 
@@ -109,9 +103,9 @@ int main()
    symbol_table.add_variable("y",y);
    double z = 0.0;
    symbol_table.add_variable("z",z);
-   fir1_sig_generic<double> fir1_sig;
+   fir1_sig_generic fir1_sig;
    symbol_table.add_function("fir1", fir1_sig);
-   conv_sig_generic<double> conv_sig;
+   conv_sig_generic conv_sig;
    symbol_table.add_function("conv", conv_sig);
    symbol_table.add_constants();
 
