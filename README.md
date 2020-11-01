@@ -3,5 +3,5 @@ Web calculator library
 
 # Example command
 ```
-var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);
+var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c, '\n');
 ```
