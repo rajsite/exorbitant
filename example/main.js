@@ -1,4 +1,4 @@
-import createExorbitant from '../source/exorbitant.js';
+import createExorbitant from '../source/index.js';
 window.createExorbitant = createExorbitant;
 
 (async function () {
