@@ -26,7 +26,9 @@ class Expression {
     }
 
     value () {
-        return this._Module._Expression_Value(this._expressionRef);
+        const ret = this._Module._Expression_Value(this._expressionRef);
+        this._Module.flushBuffer();
+        return ret;
     }
 }
 
@@ -67,7 +69,26 @@ class Exorbitant {
 }
 
 const createExorbitant = async function () {
-    const Module = await exorbitant();
+    let buffer = [];
+    const ModuleRef = {
+        Module: undefined
+    };
+    const ModuleInit = {
+        stdout: function (val) {
+            if (val === null || val === 10) {
+                console.log(ModuleRef.Module.UTF8ArrayToString(buffer, 0));
+                buffer = [];
+            } else {
+                if (val != 0) buffer.push(val);
+            }
+        }
+    };
+    const Module = await exorbitant(ModuleInit);
+    ModuleRef.Module = Module;
+    Module.flushBuffer = () => {
+        console.log(ModuleRef.Module.UTF8ArrayToString(buffer, 0));
+        buffer = [];
+    };
     return new Exorbitant(Module);
 };
 

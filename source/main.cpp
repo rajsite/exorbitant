@@ -151,30 +151,37 @@ EXPORT symbol_table_t* SymbolTable_Create() {
    symbol_table->add_package(*exorbitant_package);
    symbol_table->add_package(*io_package);
    symbol_table->add_package(*vecops_package);
+   fflush(NULL);
    return symbol_table;
 }
 
 EXPORT expression_t* Expression_Create() {
    expression_t* expression = new expression_t();
+   fflush(NULL);
    return expression;
 }
 
 EXPORT void Expression_RegisterSymbolTable(expression_t* expression, symbol_table_t* symbol_table) {
    expression->register_symbol_table(*symbol_table);
+   fflush(NULL);
 }
 
 EXPORT double Expression_Value(expression_t* expression) {
-   return expression->value();
+   double ret = expression->value();
+   fflush(NULL);
+   return ret;
 }
 
 EXPORT parser_t* Parser_Create() {
    parser_t* parser = new parser_t();
+   fflush(NULL);
    return parser;
 }
 
 EXPORT bool Parser_Compile(parser_t* parser, char* expression_cstr, expression_t* expression) {
    std::string expression_str(expression_cstr);
    bool ret = parser->compile(expression_str, *expression);
+   fflush(NULL);
    return ret;
 }
 
