@@ -175,7 +175,6 @@ EXPORT parser_t* Parser_Create() {
 EXPORT bool Parser_Compile(parser_t* parser, char* expression_cstr, expression_t* expression) {
    std::string expression_str(expression_cstr);
    bool ret = parser->compile(expression_str, *expression);
-   // todo doesn't look like print() works inside expressions :(
    return ret;
 }
 
