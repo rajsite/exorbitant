@@ -67,7 +67,9 @@ class Exorbitant {
 }
 
 const createExorbitant = async function () {
-    const Module = await exorbitant();
+    const Module = await exorbitant({
+        arguments: ['--exit']
+    });
     return new Exorbitant(Module);
 };
 

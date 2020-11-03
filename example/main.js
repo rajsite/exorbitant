@@ -8,7 +8,7 @@ window.createExorbitant = createExorbitant;
     const parser = exorbitant.createParser();
 
     expression.registerSymbolTable(symbolTable);
-    var compileRet = parser.compile(`1+1; 3+4;print(6);5+2;`, expression);
+    var compileRet = parser.compile(`var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); println(c);`, expression);
     console.log(`compiled?: ${compileRet}`);
     var ret = expression.value();
     console.log(`ret: ${ret}`);
