@@ -23,10 +23,12 @@ class Expression {
 
     registerSymbolTable (symbolTable) {
         this._Module._Expression_RegisterSymbolTable(this._expressionRef, symbolTable._symbolTableRef);
+        this._Module.exorbitantFlush();
     }
 
     value () {
         const ret = this._Module._Expression_Value(this._expressionRef);
+        this._Module.exorbitantFlush();
         return ret;
     }
 }
@@ -42,6 +44,7 @@ class Parser {
         const strPtr = writeStringToStack(this._Module, str);
         const ret = this._Module._Parser_Compile(this._parserRef, strPtr, expression._expressionRef);
         this._Module.stackRestore(stack);
+        this._Module.exorbitantFlush();
         return ret;
     }
 }
@@ -53,16 +56,19 @@ class Exorbitant {
 
     createSymbolTable () {
         const symbolTableRef = this._Module._SymbolTable_Create();
+        this._Module.exorbitantFlush();
         return new SymbolTable(this._Module, symbolTableRef);
     }
 
     createExpression () {
         const expressionRef = this._Module._Expression_Create();
+        this._Module.exorbitantFlush();
         return new Expression(this._Module, expressionRef);
     }
 
     createParser () {
         const parserRef = this._Module._Parser_Create();
+        this._Module.exorbitantFlush();
         return new Parser(this._Module, parserRef);
     }
 }
