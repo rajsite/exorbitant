@@ -81,7 +81,7 @@ const createExorbitant = async function () {
     if (ENVIRONMENT_IS_NODE) {
         ModuleIn.locateFile = function (path, prefix) {
             if (path.endsWith('.wasm')) {
-                return __dirname + '\\exorbitant.wasm';
+                return __dirname + '/exorbitant.wasm';
             }
             return prefix + path;
         };
