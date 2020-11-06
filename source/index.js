@@ -74,9 +74,22 @@ class Exorbitant {
 }
 
 const createExorbitant = async function () {
-    const Module = await exorbitant({
+    const ModuleIn = {
         arguments: ['--exit']
-    });
+    };
+    const ENVIRONMENT_IS_NODE = typeof process === "object" && typeof process.versions === "object" && typeof process.versions.node === "string";
+    if (ENVIRONMENT_IS_NODE) {
+        ModuleIn.locateFile = function (path, prefix) {
+            if (path.endsWith('.wasm')) {
+                return __dirname + '\\exorbitant.wasm';
+            }
+            return prefix + path;
+        };
+        ModuleIn.quit = function (status, toThrow) {
+            throw toThrow;
+        };
+    }
+    const Module = await exorbitant(ModuleIn);
     return new Exorbitant(Module);
 };
 

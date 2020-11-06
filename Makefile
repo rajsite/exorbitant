@@ -22,6 +22,9 @@ $(DIST):
 $(DIST)/exorbitant.js : $(SOURCE) | $(DIST)
 	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
+$(DIST)/exorbitant.umd.js: $(DIST)/exorbitant.js source/index.js source/prejs
+	npm run build
+
 .PHONY : build
 
-build : $(DIST)/exorbitant.js
+build : $(DIST)/exorbitant.umd.js
