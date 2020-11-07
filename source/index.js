@@ -12,6 +12,29 @@ class SymbolTable {
     constructor (Module, symbolTableRef) {
         this._Module = Module;
         this._symbolTableRef = symbolTableRef;
+        this._vectors = new Map();
+    }
+
+    addVariable (name, number) {
+        const stack = this._Module.stackSave();
+        const namePtr = writeStringToStack(this._Module, name);
+        const ret = this._Module._SymbolTable_AddVariable(this._symbolTableRef, namePtr, number);
+        this._Module.stackRestore(stack);
+        this._Module.exorbitantFlush();
+    }
+
+    addVector (name, size) {
+        const vectorPtr = this._Module._malloc(size * 8);
+        if (vectorPtr === 0) {
+            throw new Error(`Not enough memory to allocate vector ${name} with size ${size}`);
+        }
+        this._vectors.set(name, vectorPtr);
+        const stack = this._Module.stackSave();
+        const namePtr = writeStringToStack(this._Module, name);
+        const ret = this._Module._SymbolTable_AddVector(this._symbolTableRef, namePtr, vectorPtr, size);
+        this._Module.stackRestore(stack);
+        this._Module.exorbitantFlush();
+        return new Float64Array(this._Module.HEAP8.buffer, vectorPtr, size);
     }
 }
 

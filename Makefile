@@ -4,8 +4,9 @@ MKDIR="mkdir"
 
 COMPILER          := emcc
 BASE_OPTIONS      := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long
-EM_OPT            := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=exorbitant --pre-js source/prejs
-EM_EXPORTS        := -s EXTRA_EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
+EM_PREJS          := source/prejs
+EM_OPT            := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=exorbitant --pre-js $(EM_PREJS)
+EM_EXPORTS        := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXTRA_EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
 OPTIMIZATION_OPT  := -O3
 OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(OPTIMIZATION_OPT)
 LINKER_OPT        := -lm
@@ -22,7 +23,7 @@ $(DIST):
 $(DIST)/exorbitant.js : $(SOURCE) | $(DIST)
 	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
-$(DIST)/exorbitant.umd.js: $(DIST)/exorbitant.js source/index.js source/prejs
+$(DIST)/exorbitant.umd.js: $(DIST)/exorbitant.js $(EM_PREJS) source/index.js
 	npm run build
 
 .PHONY : build
