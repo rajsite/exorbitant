@@ -8,7 +8,7 @@ var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);
 
 ## Example node usage
 ```js
-const createExorbitant = require('exorbitant');
+const {createExorbitant} = require('exorbitant');
 (async function () {
     const exorbitant = await createExorbitant();
     const symbolTable = exorbitant.createSymbolTable();
