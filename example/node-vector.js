@@ -1,4 +1,4 @@
-const createExorbitant = require('../dist/exorbitant.umd.js');
+const {createExorbitant} = require('../dist/exorbitant.umd.js');
 (async function () {
     const exorbitant = await createExorbitant();
     const symbolTable = exorbitant.createSymbolTable();

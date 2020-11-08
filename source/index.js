@@ -154,4 +154,4 @@ const createExorbitant = async function () {
     return new Exorbitant(Module);
 };
 
-export default createExorbitant;
+export {createExorbitant};

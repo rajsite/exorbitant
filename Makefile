@@ -17,6 +17,8 @@ DEPS_INCLUDE      := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -i
 DIST              := dist
 SOURCE            := source/main.cpp
 
+.DEFAULT_GOAL := build
+
 $(DIST):
 	@$(MKDIR) -p $(DIST)
 

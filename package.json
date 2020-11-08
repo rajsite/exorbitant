@@ -1,6 +1,6 @@
 {
   "name": "exorbitant",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Web calculator library",
   "main": "dist/exorbitant.umd.js",
   "module": "source/index.js",
@@ -19,7 +19,7 @@
     "source/*.js"
   ],
   "scripts": {
-    "build": "rollup source/index.js --format umd --name exorbitant --file dist/exorbitant.umd.js"
+    "build": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js"
   },
   "dependencies": {},
   "devDependencies": {
