@@ -8,33 +8,71 @@ const writeStringToStack = function (Module, str) {
     return strStackPointer;
 };
 
+class Variable {
+    constructor (Module, variableRef) {
+        this._Module = Module;
+        this._variableRef = variableRef;
+    }
+
+    set value (number) {
+        this._Module.HEAPF64[this._variableRef / 8] = number;
+    }
+
+    get value () {
+        return this._Module.HEAPF64[this._variableRef / 8];
+    }
+}
+
+class Vector {
+    constructor (Module, vectorRef, size) {
+        this._Module = Module;
+        this._vectorRef = vectorRef;
+        this._size = size;
+    }
+
+    // Only valid until before another exorbitant function used. DO NO SAVE REFERENCE.
+    // Memory growth due to function execution will invalidate buffer.
+    createBufferView () {
+        return new Float64Array(this._Module.HEAP8.buffer, this._vectorRef, this._size);
+    }
+
+    assign (arrayLike) {
+        for (let i = this._vectorRef / 8; i < this._size; i++) {
+            this._Module.HEAPF64[i] = arrayLike[i];
+        }
+    }
+}
+
 class SymbolTable {
     constructor (Module, symbolTableRef) {
         this._Module = Module;
         this._symbolTableRef = symbolTableRef;
-        this._vectors = new Map();
     }
 
-    addVariable (name, number) {
-        const stack = this._Module.stackSave();
-        const namePtr = writeStringToStack(this._Module, name);
-        const ret = this._Module._SymbolTable_AddVariable(this._symbolTableRef, namePtr, number);
-        this._Module.stackRestore(stack);
-        this._Module.exorbitantFlush();
-    }
-
-    addVector (name, size) {
-        const vectorPtr = this._Module._malloc(size * 8);
-        if (vectorPtr === 0) {
-            throw new Error(`Not enough memory to allocate vector ${name} with size ${size}`);
+    createVariable (name) {
+        const variableRef = this._Module._malloc(8);
+        if (variableRef === 0) {
+            throw new Error(`Not enough memory to allocate variable ${name}.`);
         }
-        this._vectors.set(name, vectorPtr);
         const stack = this._Module.stackSave();
-        const namePtr = writeStringToStack(this._Module, name);
-        const ret = this._Module._SymbolTable_AddVector(this._symbolTableRef, namePtr, vectorPtr, size);
+        const nameRef = writeStringToStack(this._Module, name);
+        const ret = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
         this._Module.stackRestore(stack);
         this._Module.exorbitantFlush();
-        return new Float64Array(this._Module.HEAP8.buffer, vectorPtr, size);
+        return new Variable(this._Module, variableRef);
+    }
+
+    createVector (name, size) {
+        const vectorRef = this._Module._malloc(size * 8);
+        if (vectorRef === 0) {
+            throw new Error(`Not enough memory to allocate vector ${name} with size ${size}.`);
+        }
+        const stack = this._Module.stackSave();
+        const nameRef = writeStringToStack(this._Module, name);
+        const ret = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
+        this._Module.stackRestore(stack);
+        this._Module.exorbitantFlush();
+        return new Vector(this._Module, vectorRef, size);
     }
 }
 
@@ -64,8 +102,8 @@ class Parser {
 
     compile (str, expression) {
         const stack = this._Module.stackSave();
-        const strPtr = writeStringToStack(this._Module, str);
-        const ret = this._Module._Parser_Compile(this._parserRef, strPtr, expression._expressionRef);
+        const strRef = writeStringToStack(this._Module, str);
+        const ret = this._Module._Parser_Compile(this._parserRef, strRef, expression._expressionRef);
         this._Module.stackRestore(stack);
         this._Module.exorbitantFlush();
         return ret;

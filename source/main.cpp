@@ -134,7 +134,7 @@ typedef exprtk::parser_error::type              error_t;
 
 extern "C" {
    extern symbol_table_t* SymbolTable_Create();
-   extern bool SymbolTable_AddVariable(symbol_table_t* symbol_table, char* name_cstr, double value);
+   extern bool SymbolTable_AddVariable(symbol_table_t* symbol_table, char* name_cstr, double* value);
    extern bool SymbolTable_AddVector(symbol_table_t* symbol_table, char* name_cstr, double* value, size_t size);
    extern expression_t* Expression_Create();
    extern void Expression_RegisterSymbolTable(expression_t* expression, symbol_table_t* symbol_table);
@@ -157,9 +157,9 @@ EXPORT symbol_table_t* SymbolTable_Create() {
    return symbol_table;
 }
 
-EXPORT bool SymbolTable_AddVariable(symbol_table_t* symbol_table, char* name_cstr, double value) {
+EXPORT bool SymbolTable_AddVariable(symbol_table_t* symbol_table, char* name_cstr, double* value) {
    std::string name_str(name_cstr);
-   bool ret = symbol_table->add_variable(name_str, value);
+   bool ret = symbol_table->add_variable(name_str, *value);
    fflush(NULL);
    return ret;
 }
