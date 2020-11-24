@@ -1,3 +1,6 @@
+// Copyright (c) 2020 Milan Raj
+// SPDX-License-Identifier: MIT
+
 const {createExorbitant} = require('../dist/exorbitant.umd.js');
 (async function () {
     const exorbitant = await createExorbitant();

@@ -1,3 +1,6 @@
+// Copyright (c) 2020 Milan Raj
+// SPDX-License-Identifier: MIT
+
 import exorbitant from '../dist/exorbitant.js';
 
 // Make sure to use Module.stackSave() before calling

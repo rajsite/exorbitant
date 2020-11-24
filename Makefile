@@ -1,3 +1,6 @@
+# Copyright (c) 2020 Milan Raj
+# SPDX-License-Identifier: MIT
+
 # The mkdir command has to be quoted so that it is not intercepted in the windows shell
 # and instead uses the version on PATH (ie that is unix mkdir compatible)
 MKDIR="mkdir"
@@ -8,11 +11,12 @@ EM_PREJS          := source/prejs
 EM_OPT            := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=exorbitant --pre-js $(EM_PREJS)
 EM_EXPORTS        := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXTRA_EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
 OPTIMIZATION_OPT  := -O3
-OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(OPTIMIZATION_OPT)
 LINKER_OPT        := -lm
 EXPRTK_INCLUDE    := imports/exprtk/
 ARMADILLO_INCLUDE := imports/armadillo-code/include/
+ARMADILLO_OPT     := -DARMA_DONT_USE_LAPACK -DARMA_DONT_USE_NEWARP -DARMA_DONT_USE_ARPACK -DARMA_DONT_USE_BLAS -DARMA_DONT_USE_SUPERLU -DARMA_DONT_USE_HDF5 -DARMA_DONT_USE_OPENMP
 SIGPACK_INCLUDE   := imports/sigpack/sigpack/
+OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(ARMADILLO_OPT) $(OPTIMIZATION_OPT)
 DEPS_INCLUDE      := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -isystem $(SIGPACK_INCLUDE)
 DIST              := dist
 SOURCE            := source/main.cpp
