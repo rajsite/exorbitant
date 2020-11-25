@@ -105,4 +105,5 @@ dist
 
 wapm_packages
 
-.vscode
+.vscode/*
+!.vscode/c_cpp_properties.json
