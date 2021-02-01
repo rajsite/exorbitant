@@ -1,10 +1,14 @@
 # exorbitant
 Web calculator library
 
-## Example command
-```
-var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);
-```
+## Example cli usage
+
+1. Go to [WebAssembly.sh](https://webassembly.sh/).
+2. Run the command `exorbitant` to start the exorbitant REPL.
+3. Run the following example command:
+    ```
+    var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);
+    ```
 
 ## Example node usage
 ```js
