@@ -21,8 +21,7 @@
   "scripts": {
     "build": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js"
   },
-  "dependencies": {},
   "devDependencies": {
-    "rollup": "^2.33.1"
+    "rollup": "^2.61.1"
   }
 }

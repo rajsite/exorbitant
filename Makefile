@@ -9,7 +9,7 @@ COMPILER          := emcc
 BASE_OPTIONS      := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long
 EM_PREJS          := source/prejs
 EM_OPT            := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=exorbitant --pre-js $(EM_PREJS)
-EM_EXPORTS        := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXTRA_EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
+EM_EXPORTS        := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
 OPTIMIZATION_OPT  := -O3
 LINKER_OPT        := -lm
 EXPRTK_INCLUDE    := imports/exprtk/
