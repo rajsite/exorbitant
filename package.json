@@ -1,6 +1,6 @@
 {
   "name": "exorbitant",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Web calculator library",
   "main": "dist/exorbitant.umd.js",
   "module": "source/index.js",
