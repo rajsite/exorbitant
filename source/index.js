@@ -11,7 +11,7 @@ const writeStringToStack = function (Module, str) {
     return strStackPointer;
 };
 
-class Variable {
+export class Variable {
     constructor (Module, variableRef) {
         this._Module = Module;
         this._variableRef = variableRef;
@@ -26,7 +26,7 @@ class Variable {
     }
 }
 
-class Vector {
+export class Vector {
     constructor (Module, vectorRef, size) {
         this._Module = Module;
         this._vectorRef = vectorRef;
@@ -46,7 +46,7 @@ class Vector {
     }
 }
 
-class SymbolTable {
+export class SymbolTable {
     constructor (Module, symbolTableRef) {
         this._Module = Module;
         this._symbolTableRef = symbolTableRef;
@@ -79,7 +79,7 @@ class SymbolTable {
     }
 }
 
-class Expression {
+export class Expression {
     constructor (Module, expressionRef) {
         this._Module = Module;
         this._expressionRef = expressionRef;
@@ -97,7 +97,7 @@ class Expression {
     }
 }
 
-class Parser {
+export class Parser {
     constructor (Module, parserRef) {
         this._Module = Module;
         this._parserRef = parserRef;
@@ -113,7 +113,7 @@ class Parser {
     }
 }
 
-class Exorbitant {
+export class Exorbitant {
     constructor (Module) {
         this._Module = Module;
     }
@@ -137,7 +137,7 @@ class Exorbitant {
     }
 }
 
-const createExorbitant = async function () {
+export const createExorbitant = async function () {
     const ModuleIn = {
         arguments: ['--exit']
     };
@@ -156,5 +156,3 @@ const createExorbitant = async function () {
     const Module = await exorbitant(ModuleIn);
     return new Exorbitant(Module);
 };
-
-export {createExorbitant};

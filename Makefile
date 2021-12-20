@@ -13,10 +13,12 @@ EM_EXPORTS        := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXPORTED_RU
 OPTIMIZATION_OPT  := -O3
 LINKER_OPT        := -lm
 EXPRTK_INCLUDE    := imports/exprtk/
+# EXPRTK_OPT        := -Dexprtk_disable_enhanced_features
+EXPRTK_OPT        :=
 ARMADILLO_INCLUDE := imports/armadillo-code/include/
 ARMADILLO_OPT     := -DARMA_DONT_USE_LAPACK -DARMA_DONT_USE_NEWARP -DARMA_DONT_USE_ARPACK -DARMA_DONT_USE_BLAS -DARMA_DONT_USE_SUPERLU -DARMA_DONT_USE_HDF5 -DARMA_DONT_USE_OPENMP
 SIGPACK_INCLUDE   := imports/sigpack/sigpack/
-OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(ARMADILLO_OPT) $(OPTIMIZATION_OPT)
+OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(EXPRTK_OPT) $(ARMADILLO_OPT) $(OPTIMIZATION_OPT)
 DEPS_INCLUDE      := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -isystem $(SIGPACK_INCLUDE)
 DIST              := dist
 SOURCE            := source/main.cpp
