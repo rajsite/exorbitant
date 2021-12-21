@@ -25,7 +25,9 @@
     "rebuild": "npm run clean && npm run build",
     "rebuild:development": "npm run clean && npm run build:development",
     "bundle": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js",
-    "example:node": "node example/node-example.js"
+    "example:node": "node example/node-example.js",
+    "wasmer": "wasmer run --disable-cache dist/exorbitant.wasm",
+    "example:node:wasi": "node --experimental-wasi-unstable-preview1 --experimental-wasm-bigint example/node-wasi.js"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
