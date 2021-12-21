@@ -30,7 +30,7 @@ jobs:
     - name: Build exorbitant
       run: |
         imports\emsdk\emsdk_env.ps1
-        emmake make build
+        npm run build
         npm pack
     - name: Upload binaries
       uses: actions/upload-artifact@v2
