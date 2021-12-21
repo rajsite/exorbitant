@@ -14,9 +14,9 @@ endif
 
 COMPILER          := emcc
 BASE_OPTIONS      := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long
-EM_PREJS          := source/pre.js
-EM_POSTJS         := source/post.js
-EM_EXTERNPREJS    := source/extern-pre.js
+EM_PREJS          := source/utility/pre.js
+EM_POSTJS         := source/utility/post.js
+EM_EXTERNPREJS    := source/utility/extern-pre.js
 EM_OPT            := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=exorbitant --pre-js $(EM_PREJS) --post-js $(EM_POSTJS) --extern-pre-js $(EM_EXTERNPREJS)
 EM_EXPORTS        := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
 OPTIMIZATION_OPT  := -O3
@@ -25,12 +25,11 @@ ifeq ($(CONFIGURATION), development)
 endif
 LINKER_OPT        := -lm
 EXPRTK_INCLUDE    := imports/exprtk/
-EXPRTK_OPT        :=
 ARMADILLO_INCLUDE := imports/armadillo-code/include/
 ARMADILLO_OPT     := -DARMA_DONT_USE_LAPACK -DARMA_DONT_USE_NEWARP -DARMA_DONT_USE_ARPACK -DARMA_DONT_USE_BLAS -DARMA_DONT_USE_SUPERLU -DARMA_DONT_USE_HDF5 -DARMA_DONT_USE_OPENMP
 SIGPACK_INCLUDE   := imports/sigpack/sigpack/
-OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(EXPRTK_OPT) $(ARMADILLO_OPT) $(OPTIMIZATION_OPT)
-DEPS_INCLUDE      := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -isystem $(SIGPACK_INCLUDE)
+OPTIONS           := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(ARMADILLO_OPT) $(OPTIMIZATION_OPT)
+DEPS_INCLUDE      := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -isystem $(SIGPACK_INCLUDE) -Isource/include
 DIST              := dist
 SOURCE            := source/main.cpp
 
