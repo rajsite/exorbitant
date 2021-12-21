@@ -19,9 +19,11 @@
     "source/*.js"
   ],
   "scripts": {
-    "build": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js"
+    "build": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js",
+    "clean": "rimraf dist"
   },
   "devDependencies": {
+    "rimraf": "^3.0.2",
     "rollup": "^2.61.1"
   }
 }

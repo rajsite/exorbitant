@@ -61,7 +61,7 @@ export class SymbolTable {
         const nameRef = writeStringToStack(this._Module, name);
         const ret = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
         this._Module.stackRestore(stack);
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return new Variable(this._Module, variableRef);
     }
 
@@ -74,7 +74,7 @@ export class SymbolTable {
         const nameRef = writeStringToStack(this._Module, name);
         const ret = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
         this._Module.stackRestore(stack);
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return new Vector(this._Module, vectorRef, size);
     }
 }
@@ -87,12 +87,12 @@ export class Expression {
 
     registerSymbolTable (symbolTable) {
         this._Module._Expression_RegisterSymbolTable(this._expressionRef, symbolTable._symbolTableRef);
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
     }
 
     value () {
         const ret = this._Module._Expression_Value(this._expressionRef);
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return ret;
     }
 }
@@ -108,7 +108,7 @@ export class Parser {
         const strRef = writeStringToStack(this._Module, str);
         const ret = this._Module._Parser_Compile(this._parserRef, strRef, expression._expressionRef);
         this._Module.stackRestore(stack);
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return ret;
     }
 }
@@ -120,19 +120,19 @@ export class Exorbitant {
 
     createSymbolTable () {
         const symbolTableRef = this._Module._SymbolTable_Create();
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return new SymbolTable(this._Module, symbolTableRef);
     }
 
     createExpression () {
         const expressionRef = this._Module._Expression_Create();
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return new Expression(this._Module, expressionRef);
     }
 
     createParser () {
         const parserRef = this._Module._Parser_Create();
-        this._Module.exorbitantFlush();
+        this._Module.exorbitant.flush();
         return new Parser(this._Module, parserRef);
     }
 }
@@ -141,7 +141,10 @@ export const createExorbitant = async function () {
     const ModuleIn = {
         arguments: ['--exit']
     };
-    const ENVIRONMENT_IS_NODE = typeof process === "object" && typeof process.versions === "object" && typeof process.versions.node === "string";
+    var ENVIRONMENT_IS_WEB = typeof window === 'object';
+    var ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
+    var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
+    var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
     if (ENVIRONMENT_IS_NODE) {
         ModuleIn.locateFile = function (path, prefix) {
             if (path.endsWith('.wasm')) {
