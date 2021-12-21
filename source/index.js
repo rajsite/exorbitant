@@ -137,36 +137,34 @@ export class Exorbitant {
     }
 }
 
-var ENVIRONMENT_IS_WEB = typeof window === 'object';
-var ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
-var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
-
-let wasmUrl;
-
-if (ENVIRONMENT_IS_WEB) {
-    wasmUrl = new URL('exorbitant.wasm', import.meta.url).toString();
-} else if (ENVIRONMENT_IS_NODE) {
-    wasmUrl = __dirname + '/exorbitant.wasm';
-}
-
-export const createExorbitant = async function () {
-    const ModuleIn = {
-        arguments: ['--exit']
+const createModule = function () {
+    const Module = {
+        arguments: ['--exit'],
+        exorbitant: {
+            ENVIRONMENT_IS_WEB: typeof window === 'object',
+            ENVIRONMENT_IS_WORKER: typeof importScripts === 'function',
+            ENVIRONMENT_IS_NODE: typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string',
+            wasmUrl: '',
+            flush: undefined
+        }
     };
 
-    ModuleIn.locateFile = function (path, prefix) {
+    Module.locateFile = function (path, prefix) {
         if (path.endsWith('.wasm')) {
-            return wasmUrl;
+            return Module.exorbitant.wasmUrl;
         }
         return prefix + path;
     };
 
-    if (ENVIRONMENT_IS_NODE) {
-        ModuleIn.quit = function (status, toThrow) {
+    if (Module.exorbitant.ENVIRONMENT_IS_NODE) {
+        Module.quit = function (status, toThrow) {
             throw toThrow;
         };
     }
-    const Module = await exorbitant(ModuleIn);
+    return Module;
+};
+
+export const createExorbitant = async function () {
+    const Module = await exorbitant(createModule());
     return new Exorbitant(Module);
 };

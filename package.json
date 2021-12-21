@@ -19,8 +19,11 @@
     "source/*.js"
   ],
   "scripts": {
-    "build": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js",
-    "clean": "rimraf dist"
+    "build": "make build",
+    "clean": "rimraf dist",
+    "rebuild": "npm run clean && npm run build",
+    "bundle": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js",
+    "example:node": "node example/node-example.js"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",

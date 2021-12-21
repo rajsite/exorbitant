@@ -1,8 +1,0 @@
-// Copyright (c) 2020 Milan Raj
-// SPDX-License-Identifier: MIT
-
-Module.exorbitant.flush = flush_NO_FILESYSTEM;
-// Module.exorbitant.ENVIRONMENT_IS_WEB = ENVIRONMENT_IS_WEB;
-// Module.exorbitant.ENVIRONMENT_IS_WORKER = ENVIRONMENT_IS_WORKER;
-// Module.exorbitant.ENVIRONMENT_IS_NODE = ENVIRONMENT_IS_NODE;
-// Module.exorbitant.ENVIRONMENT_IS_SHELL = ENVIRONMENT_IS_SHELL;
