@@ -38,10 +38,10 @@ SOURCE            := source/main.cpp
 $(DIST):
 	@$(MKDIR) -p $(DIST)
 
-$(DIST)/exorbitant.js : $(SOURCE) | $(DIST)
+$(DIST)/exorbitant.js : $(SOURCE) $(EM_PREJS) $(EM_POSTJS) $(EM_EXTERNPREJS) | $(DIST)
 	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
-$(DIST)/exorbitant.umd.js: $(DIST)/exorbitant.js $(EM_PREJS) source/index.js
+$(DIST)/exorbitant.umd.js: $(DIST)/exorbitant.js source/index.js
 	npm run bundle
 
 .PHONY : build

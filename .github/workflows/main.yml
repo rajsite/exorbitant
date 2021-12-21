@@ -23,10 +23,7 @@ jobs:
       run: |
         chocolatey install make -y
         chocolatey install gnuwin32-coreutils.portable -y
-    - name: Install emscripten
-      run: |
-        imports\emsdk\emsdk install 3.0.1
-        imports\emsdk\emsdk activate 3.0.1
+    - run: npm run install:emsdk
     - name: Build exorbitant
       run: |
         imports\emsdk\emsdk_env.ps1
