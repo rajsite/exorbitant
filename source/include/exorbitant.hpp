@@ -1,20 +1,23 @@
+#ifndef exorbitant_exorbitant_hpp
+#define exorbitant_exorbitant_hpp
+
 #include <exprtk.hpp>
 #include <armadillo>
 #include <sigpack.h>
 #include <exprtk.hpp>
 
-using namespace arma;
-using namespace sp;
+#ifdef exprtk_enable_debugging
+#define exprtk_debug(params) printf params
+#else
+#define exprtk_debug(params) (void)0
+#endif
 
 namespace exprtk
 {
    namespace exorbitant
    {
-      #ifdef exprtk_enable_debugging
-      #define exprtk_debug(params) printf params
-      #else
-      #define exprtk_debug(params) (void)0
-      #endif
+      using namespace arma;
+      using namespace sp;
 
       struct fir1 : public exprtk::igeneric_function<double>
       {
@@ -87,9 +90,11 @@ namespace exprtk
             return true;
          }
       };
-
-      #ifdef exprtk_debug
-      #undef exprtk_debug
-      #endif
    } // namespace exprtk::exorbitant
 } // namespace exprtk
+
+#ifdef exprtk_debug
+#undef exprtk_debug
+#endif
+
+#endif
