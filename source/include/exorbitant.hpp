@@ -4,7 +4,6 @@
 #include <exprtk.hpp>
 #include <armadillo>
 #include <sigpack.h>
-#include <exprtk.hpp>
 
 #ifdef exprtk_enable_debugging
 #define exprtk_debug(params) printf params

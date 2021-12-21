@@ -4,7 +4,6 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
-#include <exprtk.hpp>
 #include <exorbitant.hpp>
 #include <entrypoints.hpp>
 

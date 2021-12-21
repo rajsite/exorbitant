@@ -1,11 +1,10 @@
 #ifndef exorbitant_entrypoints_hpp
 #define exorbitant_entrypoints_hpp
 
-#include <emscripten.h>
 #include <exprtk.hpp>
 #include <exorbitant.hpp>
 
-#define EXPORT extern "C" EMSCRIPTEN_KEEPALIVE
+#define EXPORT extern "C" __attribute__((used))
 
 namespace exorbitant
 {
