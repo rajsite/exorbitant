@@ -3,7 +3,7 @@
   "version": "0.0.18",
   "description": "Web calculator library",
   "main": "dist/exorbitant.umd.js",
-  "module": "source/index.js",
+  "module": "source/exorbitant.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rajsite/exorbitant.git"
@@ -22,9 +22,9 @@
     "build": "make build",
     "build:development": "make build CONFIGURATION=development",
     "clean": "rimraf dist",
-    "bundle": "rollup source/index.js --format umd --name exorbitantHelpers --file dist/exorbitant.umd.js",
+    "bundle": "rollup source/exorbitant.js --format umd --name exorbitant --file dist/exorbitant.umd.js",
     "example:node": "node example/node-example.js",
-    "wasmer": "wasmer run --disable-cache dist/exorbitant.wasm",
+    "wasmer": "wasmer run --disable-cache dist/exprtk.wasm",
     "example:node:wasi": "node --experimental-wasi-unstable-preview1 --experimental-wasm-bigint example/node-wasi.js",
     "install:emsdk": "imports/emsdk/emsdk install 3.0.1 && imports/emsdk/emsdk activate 3.0.1"
   },

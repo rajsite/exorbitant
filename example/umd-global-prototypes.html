@@ -12,20 +12,19 @@ SPDX-License-Identifier: MIT
     <script src="../dist/exorbitant.umd.js"></script>
     <script>
         (async function () {
-            const exorbitant = await window.exorbitantHelpers.createExorbitant();
-            const symbolTable = window.exorbitantHelpers.Exorbitant.prototype.createSymbolTable.call(exorbitant);
-            const expression = window.exorbitantHelpers.Exorbitant.prototype.createExpression.call(exorbitant);
-            const parser = window.exorbitantHelpers.Exorbitant.prototype.createParser.call(exorbitant);
+            const exprtk = await window.exorbitant.createExprtk();
+            const symbolTable = window.exorbitant.Exprtk.prototype.createSymbolTable.call(exprtk);
+            const expression = window.exorbitant.Exprtk.prototype.createExpression.call(exprtk);
+            const parser = window.exorbitant.Exprtk.prototype.createParser.call(exprtk);
 
-            window.exorbitantHelpers.Expression.prototype.registerSymbolTable.call(expression, symbolTable);
-            var compileRet = window.exorbitantHelpers.Parser.prototype.compile.call(parser, `var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
+            window.exorbitant.Expression.prototype.registerSymbolTable.call(expression, symbolTable);
+            var compileRet = window.exorbitant.Parser.prototype.compile.call(parser, `var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
             console.log(`compiled?: ${compileRet}`);
-            var ret = window.exorbitantHelpers.Expression.prototype.value.call(expression);
+            var ret = window.exorbitant.Expression.prototype.value.call(expression);
             console.log(`ret: ${ret}`);
         }());
     </script>
 </head>
 <body>
-    
 </body>
 </html>

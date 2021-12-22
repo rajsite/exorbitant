@@ -11,9 +11,9 @@ Web calculator library
 
 ## Example node usage
 ```js
-const {createExorbitant} = require('exorbitant');
+const {createExprtk} = require('exorbitant');
 (async function () {
-    const exorbitant = await createExorbitant();
+    const exorbitant = await createExprtk();
     const symbolTable = exorbitant.createSymbolTable();
     const expression = exorbitant.createExpression();
     const parser = exorbitant.createParser();

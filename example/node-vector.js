@@ -1,14 +1,14 @@
 // Copyright (c) 2020 Milan Raj
 // SPDX-License-Identifier: MIT
 
-const {createExorbitant} = require('../dist/exorbitant.umd.js');
+const {createExprtk} = require('../dist/exorbitant.umd.js');
 (async function () {
-    const exorbitant = await createExorbitant();
-    const symbolTable = exorbitant.createSymbolTable();
+    const exprtk = await createExprtk();
+    const symbolTable = exprtk.createSymbolTable();
     const dataVector = symbolTable.createVector('data', 3)
 
-    const expression = exorbitant.createExpression();
-    const parser = exorbitant.createParser();
+    const expression = exprtk.createExpression();
+    const parser = exprtk.createParser();
 
     expression.registerSymbolTable(symbolTable);
     var compileRet = parser.compile(`sum(data)`, expression);

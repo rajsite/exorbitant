@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Milan Raj
 // SPDX-License-Identifier: MIT
 
-import exorbitant from '../dist/exorbitant.js';
+import exprtk from '../dist/exprtk.js';
 
 // Make sure to use Module.stackSave() before calling
 const writeStringToStack = function (Module, str) {
@@ -33,7 +33,7 @@ export class Vector {
         this._size = size;
     }
 
-    // Only valid until before another exorbitant function used. DO NO SAVE REFERENCE.
+    // Only valid until before another function used. DO NO SAVE REFERENCE.
     // Memory growth due to function execution will invalidate buffer.
     createBufferView () {
         return new Float64Array(this._Module.HEAP8.buffer, this._vectorRef, this._size);
@@ -61,7 +61,7 @@ export class SymbolTable {
         const nameRef = writeStringToStack(this._Module, name);
         const ret = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
         this._Module.stackRestore(stack);
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return new Variable(this._Module, variableRef);
     }
 
@@ -74,7 +74,7 @@ export class SymbolTable {
         const nameRef = writeStringToStack(this._Module, name);
         const ret = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
         this._Module.stackRestore(stack);
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return new Vector(this._Module, vectorRef, size);
     }
 }
@@ -87,12 +87,12 @@ export class Expression {
 
     registerSymbolTable (symbolTable) {
         this._Module._Expression_RegisterSymbolTable(this._expressionRef, symbolTable._symbolTableRef);
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
     }
 
     value () {
         const ret = this._Module._Expression_Value(this._expressionRef);
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return ret;
     }
 }
@@ -108,31 +108,31 @@ export class Parser {
         const strRef = writeStringToStack(this._Module, str);
         const ret = this._Module._Parser_Compile(this._parserRef, strRef, expression._expressionRef);
         this._Module.stackRestore(stack);
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return ret;
     }
 }
 
-export class Exorbitant {
+export class Exprtk {
     constructor (Module) {
         this._Module = Module;
     }
 
     createSymbolTable () {
         const symbolTableRef = this._Module._SymbolTable_Create();
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return new SymbolTable(this._Module, symbolTableRef);
     }
 
     createExpression () {
         const expressionRef = this._Module._Expression_Create();
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return new Expression(this._Module, expressionRef);
     }
 
     createParser () {
         const parserRef = this._Module._Parser_Create();
-        this._Module.exorbitant.flush();
+        this._Module.exprtk.flush();
         return new Parser(this._Module, parserRef);
     }
 }
@@ -140,7 +140,7 @@ export class Exorbitant {
 const createModule = function () {
     const Module = {
         arguments: ['--exit'],
-        exorbitant: {
+        exprtk: {
             ENVIRONMENT_IS_WEB: typeof window === 'object',
             ENVIRONMENT_IS_WORKER: typeof importScripts === 'function',
             ENVIRONMENT_IS_NODE: typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string',
@@ -151,12 +151,12 @@ const createModule = function () {
 
     Module.locateFile = function (path, prefix) {
         if (path.endsWith('.wasm')) {
-            return Module.exorbitant.wasmUrl;
+            return Module.exprtk.wasmUrl;
         }
         return prefix + path;
     };
 
-    if (Module.exorbitant.ENVIRONMENT_IS_NODE) {
+    if (Module.exprtk.ENVIRONMENT_IS_NODE) {
         Module.quit = function (status, toThrow) {
             throw toThrow;
         };
@@ -164,7 +164,7 @@ const createModule = function () {
     return Module;
 };
 
-export const createExorbitant = async function () {
-    const Module = await exorbitant(createModule());
-    return new Exorbitant(Module);
+export const createExprtk = async function () {
+    const Module = await exprtk(createModule());
+    return new Exprtk(Module);
 };

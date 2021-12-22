@@ -9,7 +9,7 @@ homepage = "https://github.com/rajsite/exorbitant"
 
 [[module]]
 name = "exorbitant"
-source = "dist/exorbitant.wasm"
+source = "dist/exprtk.wasm"
 abi = "wasi"
 
 [module.interfaces]
