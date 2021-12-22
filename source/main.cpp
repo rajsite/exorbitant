@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
    double y = 0.0;
    double z = 0.0;
 
+   SymbolTable_AddConstants(symbol_table);
    SymbolTable_AddPackageIO(symbol_table);
    SymbolTable_AddPackageVecops(symbol_table);
    SymbolTable_AddPackageArmadillo(symbol_table);

@@ -18,6 +18,7 @@ namespace exprtk
         extern "C"
         {
             extern symbol_table_t *SymbolTable_Create();
+            extern bool SymbolTable_AddConstants(symbol_table_t *symbol_table);
             extern bool SymbolTable_AddPackageIO(symbol_table_t *symbol_table);
             extern bool SymbolTable_AddPackageVecops(symbol_table_t *symbol_table);
             extern bool SymbolTable_AddVariable(symbol_table_t *symbol_table, const char *name_cstr, double *value);
@@ -33,9 +34,15 @@ namespace exprtk
         EXPRTK_EXPORT symbol_table_t *SymbolTable_Create()
         {
             symbol_table_t *symbol_table = new symbol_table_t();
-            symbol_table->add_constants();
             fflush(NULL);
             return symbol_table;
+        }
+
+        EXPRTK_EXPORT bool SymbolTable_AddConstants(symbol_table_t *symbol_table)
+        {
+            bool ret = symbol_table->add_constants();
+            fflush(NULL);
+            return ret;
         }
 
         EXPRTK_EXPORT bool SymbolTable_AddPackageIO(symbol_table_t *symbol_table)
