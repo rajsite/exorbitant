@@ -16,9 +16,8 @@ jobs:
     - name: Setup Node
       uses: actions/setup-node@v1
       with:
-        node-version: '12'
+        node-version: '16'
         registry-url: 'https://registry.npmjs.org'
-    - run: npm install --global npm@7
     - run: npm ci
     - run: chocolatey install make -y
     - run: chocolatey install gnuwin32-coreutils.portable -y
