@@ -34,7 +34,15 @@ OPTIONS            := $(BASE_OPTIONS) $(EM_OPT) $(EM_EXPORTS) $(ARMADILLO_OPT) $
 DEPS_INCLUDE       := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -isystem $(SIGPACK_INCLUDE) -I${EXORBITANT_INCLUDE}
 DIST               := dist
 SOURCE             := source/main.cpp
-DEPENDENCIES       := Makefile ${EXORBITANT_INCLUDE}/entrypoints.hpp ${EXORBITANT_INCLUDE}/exorbitant.hpp $(EM_PREJS) $(EM_POSTJS) $(EM_EXTERNPREJS)
+DEPENDENCIES       :=   Makefile \
+						${EXORBITANT_INCLUDE}/exprtk_armadillo_entrypoints.hpp \
+						${EXORBITANT_INCLUDE}/exprtk_armadillo.hpp \
+						${EXORBITANT_INCLUDE}/exprtk_entrypoints.hpp \
+						${EXORBITANT_INCLUDE}/exprtk_sigpack_entrypoints.hpp \
+						${EXORBITANT_INCLUDE}/exprtk_sigpack.hpp \
+						$(EM_PREJS) \
+						$(EM_POSTJS) \
+						$(EM_EXTERNPREJS)
 
 .DEFAULT_GOAL := build
 

@@ -4,13 +4,25 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
-#include <exorbitant.hpp>
-#include <entrypoints.hpp>
+#include <exprtk_armadillo.hpp>
+#include <exprtk_sigpack.hpp>
 
-using namespace exorbitant::entrypoints;
+#include <exprtk_entrypoints.hpp>
+#include <exprtk_armadillo_entrypoints.hpp>
+#include <exprtk_sigpack_entrypoints.hpp>
 
 int main(int argc, char* argv[])
 {
+   typedef exprtk::symbol_table<double> symbol_table_t;
+   typedef exprtk::armadillo::package armadillo_package_t;
+   typedef exprtk::sigpack::package sigpack_package_t;
+   typedef exprtk::rtl::io::package<double> io_package_t;
+   typedef exprtk::rtl::vecops::package<double> vecops_package_t;
+
+   typedef exprtk::expression<double> expression_t;
+   typedef exprtk::parser<double> parser_t;
+   typedef exprtk::parser_error::type error_t;
+
    std::string exitFlag("--exit");
    for (int i = 0; i < argc; i++) {
       std::string currentFlag(argv[i]);
@@ -19,7 +31,8 @@ int main(int argc, char* argv[])
       }
    }
    symbol_table_t symbol_table;
-   exorbitant_package_t exorbitant_package;
+   armadillo_package_t armadillo_package;
+   sigpack_package_t sigpack_package;
    io_package_t io_package;
    vecops_package_t vecops_package;
    double x = 0.0;
@@ -27,7 +40,8 @@ int main(int argc, char* argv[])
    double z = 0.0;
 
    symbol_table.add_constants();
-   symbol_table.add_package(exorbitant_package);
+   symbol_table.add_package(armadillo_package);
+   symbol_table.add_package(sigpack_package);
    symbol_table.add_package(io_package);
    symbol_table.add_package(vecops_package);
    symbol_table.add_variable("x",x);
