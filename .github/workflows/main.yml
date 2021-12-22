@@ -34,3 +34,5 @@ jobs:
       with:
         name: exorbitant archive
         path: ./exorbitant-*.tgz
+    - name: test
+      run: npm test

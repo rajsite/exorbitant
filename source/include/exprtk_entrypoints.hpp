@@ -27,6 +27,7 @@ namespace exprtk
             extern double Expression_Value(expression_t *expression);
             extern parser_t *Parser_Create();
             extern bool Parser_Compile(parser_t *parser, char *expression_cstr, expression_t *expression);
+            extern void Parser_PrintError(parser_t *parser);
         }
 
         EXPRTK_EXPORT symbol_table_t *SymbolTable_Create()
@@ -100,28 +101,29 @@ namespace exprtk
 
         EXPRTK_EXPORT bool Parser_Compile(parser_t *parser, char *expression_cstr, expression_t *expression)
         {
-            typedef parser_error::type error_t;
             std::string expression_str(expression_cstr);
             bool ret = parser->compile(expression_str, *expression);
-            if (!ret)
-            {
-                printf("Error: %s\tExpression: %s\n",
-                       parser->error().c_str(),
-                       expression_str.c_str());
+            fflush(NULL);
+            return ret;
+        }
 
+        EXPRTK_EXPORT void Parser_PrintError(parser_t *parser)
+        {
+            typedef parser_error::type error_t;
+            if (parser->error_count() > 0)
+            {
+                printf("Error: %s\n", parser->error().c_str());
                 for (std::size_t i = 0; i < parser->error_count(); ++i)
                 {
                     error_t error = parser->get_error(i);
-                    printf("Err: %02d Pos: %02d Type: [%14s] Msg: %s\tExpression: %s\n",
+                    printf("Err: %02d Pos: %02d Type: [%14s] Msg: %s\n",
                            static_cast<unsigned int>(i),
                            static_cast<unsigned int>(error.token.position),
                            parser_error::to_str(error.mode).c_str(),
-                           error.diagnostic.c_str(),
-                           expression_str.c_str());
+                           error.diagnostic.c_str());
                 }
             }
             fflush(NULL);
-            return ret;
         }
 
     }

@@ -53,7 +53,9 @@ int main(int argc, char* argv[])
          break;
 
       parser_t *parser = Parser_Create();
-      if (Parser_Compile(parser, const_cast<char*>(expression_str.c_str()), expression)) {
+      if (!Parser_Compile(parser, const_cast<char*>(expression_str.c_str()), expression)) {
+         Parser_PrintError(parser);
+      } else {
          double result = Expression_Value(expression);
          printf("result: %20.10f\n",result);
       }

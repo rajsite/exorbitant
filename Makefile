@@ -53,7 +53,7 @@ $(DIST)/exprtk.js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
 	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
 $(DIST)/exorbitant.umd.js: $(DIST)/exprtk.js source/exprtk.js source/exorbitant.js
-	npm run bundle
+	npm run make:bundle
 
 .PHONY : build
 

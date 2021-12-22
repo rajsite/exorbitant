@@ -116,6 +116,11 @@ export class Parser {
         this._Module.exprtk.flush();
         return ret;
     }
+
+    printError () {
+        this._Module._Parser_PrintError(this._parserRef);
+        this._Module.exprtk.flush();
+    }
 }
 
 export class Exprtk {

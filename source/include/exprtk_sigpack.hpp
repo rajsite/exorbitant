@@ -50,8 +50,8 @@ namespace exprtk
             if (!symtab.add_function(FunctionName,FunctionType))                         \
             {                                                                            \
                exprtk_debug((                                                            \
-               "sigpack::register_package - Failed to add function: %s\n", \
-               FunctionName));                                                         \
+               "sigpack::register_package - Failed to add function: %s\n",               \
+               FunctionName));                                                           \
                return false;                                                             \
             }                                                                            \
 

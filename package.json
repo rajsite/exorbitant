@@ -22,10 +22,14 @@
     "build": "make build",
     "build:development": "make build CONFIGURATION=development",
     "clean": "rimraf dist",
-    "bundle": "rollup source/exorbitant.js --format umd --name exorbitant --file dist/exorbitant.umd.js",
-    "example:node": "node example/node-example.js",
-    "wasmer": "wasmer run --disable-cache dist/exprtk.wasm",
-    "example:node:wasi": "node --experimental-wasi-unstable-preview1 --experimental-wasm-bigint example/node-wasi.js",
+    "test": "npm run example:node",
+    "make:bundle": "rollup source/exorbitant.js --format umd --name exorbitant --file dist/exorbitant.umd.js",
+    "example:node": "npm run example:node:simple && npm run example:node:variable && npm run example:node:vector && npm run example:node:wasi",
+    "example:node:simple": "node example/node/simple.js",
+    "example:node:variable": "node example/node/variable.js",
+    "example:node:vector": "node example/node/vector.js",
+    "example:node:wasi": "node --experimental-wasi-unstable-preview1 --experimental-wasm-bigint example/node/wasi.js",
+    "example:wasmer": "wasmer run --disable-cache dist/exprtk.wasm",
     "install:emsdk": "cd imports/emsdk && emsdk install 3.0.1 && emsdk activate 3.0.1"
   },
   "devDependencies": {
