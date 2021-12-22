@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
       }
    }
    symbol_table_t *symbol_table = SymbolTable_Create();
-   
+
    double x = 0.0;
    double y = 0.0;
    double z = 0.0;
@@ -31,9 +31,9 @@ int main(int argc, char* argv[])
    SymbolTable_AddPackageVecops(symbol_table);
    SymbolTable_AddPackageArmadillo(symbol_table);
    SymbolTable_AddPackageSigpack(symbol_table);
-   SymbolTable_AddVariable(symbol_table, const_cast<char*>("x"), &x);
-   SymbolTable_AddVariable(symbol_table, const_cast<char*>("y"), &y);
-   SymbolTable_AddVariable(symbol_table, const_cast<char*>("z"), &z);
+   SymbolTable_AddVariable(symbol_table, "x", &x);
+   SymbolTable_AddVariable(symbol_table, "y", &y);
+   SymbolTable_AddVariable(symbol_table, "z", &z);
 
    for ( ; ; )
    {
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
          break;
 
       parser_t *parser = Parser_Create();
-      if (!Parser_Compile(parser, const_cast<char*>(expression_str.c_str()), expression)) {
+      if (!Parser_Compile(parser, expression_str.c_str(), expression)) {
          Parser_PrintError(parser);
       } else {
          double result = Expression_Value(expression);

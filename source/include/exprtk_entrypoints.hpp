@@ -20,13 +20,13 @@ namespace exprtk
             extern symbol_table_t *SymbolTable_Create();
             extern bool SymbolTable_AddPackageIO(symbol_table_t *symbol_table);
             extern bool SymbolTable_AddPackageVecops(symbol_table_t *symbol_table);
-            extern bool SymbolTable_AddVariable(symbol_table_t *symbol_table, char *name_cstr, double *value);
-            extern bool SymbolTable_AddVector(symbol_table_t *symbol_table, char *name_cstr, double *value, size_t size);
+            extern bool SymbolTable_AddVariable(symbol_table_t *symbol_table, const char *name_cstr, double *value);
+            extern bool SymbolTable_AddVector(symbol_table_t *symbol_table, const char *name_cstr, double *value, size_t size);
             extern expression_t *Expression_Create();
             extern void Expression_RegisterSymbolTable(expression_t *expression, symbol_table_t *symbol_table);
             extern double Expression_Value(expression_t *expression);
             extern parser_t *Parser_Create();
-            extern bool Parser_Compile(parser_t *parser, char *expression_cstr, expression_t *expression);
+            extern bool Parser_Compile(parser_t *parser, const char *expression_cstr, expression_t *expression);
             extern void Parser_PrintError(parser_t *parser);
         }
 
@@ -56,17 +56,17 @@ namespace exprtk
             return ret;
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddVariable(symbol_table_t *symbol_table, char *name_cstr, double *value)
+        EXPRTK_EXPORT bool SymbolTable_AddVariable(symbol_table_t *symbol_table, const char *name_cstr, double *value)
         {
-            std::string name_str(name_cstr);
+            const std::string name_str(name_cstr);
             bool ret = symbol_table->add_variable(name_str, *value);
             fflush(NULL);
             return ret;
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddVector(symbol_table_t *symbol_table, char *name_cstr, double *value, size_t size)
+        EXPRTK_EXPORT bool SymbolTable_AddVector(symbol_table_t *symbol_table, const char *name_cstr, double *value, size_t size)
         {
-            std::string name_str(name_cstr);
+            const std::string name_str(name_cstr);
             bool ret = symbol_table->add_vector(name_str, value, size);
             fflush(NULL);
             return ret;
@@ -99,9 +99,9 @@ namespace exprtk
             return parser;
         }
 
-        EXPRTK_EXPORT bool Parser_Compile(parser_t *parser, char *expression_cstr, expression_t *expression)
+        EXPRTK_EXPORT bool Parser_Compile(parser_t *parser, const char *expression_cstr, expression_t *expression)
         {
-            std::string expression_str(expression_cstr);
+            const std::string expression_str(expression_cstr);
             bool ret = parser->compile(expression_str, *expression);
             fflush(NULL);
             return ret;
