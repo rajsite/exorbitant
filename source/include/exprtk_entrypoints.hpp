@@ -12,12 +12,8 @@ namespace exprtk
     namespace entrypoints
     {
         typedef symbol_table<double> symbol_table_t;
-        typedef rtl::io::package<double> io_package_t;
-        typedef rtl::vecops::package<double> vecops_package_t;
-
         typedef expression<double> expression_t;
         typedef parser<double> parser_t;
-        typedef parser_error::type error_t;
 
         extern "C"
         {
@@ -43,6 +39,7 @@ namespace exprtk
 
         EXPRTK_EXPORT bool SymbolTable_AddPackageIO(symbol_table_t *symbol_table)
         {
+            typedef rtl::io::package<double> io_package_t;
             io_package_t *io_package = new io_package_t();
             bool ret = symbol_table->add_package(*io_package);
             fflush(NULL);
@@ -51,6 +48,7 @@ namespace exprtk
 
         EXPRTK_EXPORT bool SymbolTable_AddPackageVecops(symbol_table_t *symbol_table)
         {
+            typedef rtl::vecops::package<double> vecops_package_t;
             vecops_package_t *vecops_package = new vecops_package_t();
             bool ret = symbol_table->add_package(*vecops_package);
             fflush(NULL);
@@ -102,6 +100,7 @@ namespace exprtk
 
         EXPRTK_EXPORT bool Parser_Compile(parser_t *parser, char *expression_cstr, expression_t *expression)
         {
+            typedef parser_error::type error_t;
             std::string expression_str(expression_cstr);
             bool ret = parser->compile(expression_str, *expression);
             if (!ret)

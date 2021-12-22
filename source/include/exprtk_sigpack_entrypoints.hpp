@@ -14,17 +14,16 @@ namespace exprtk
     {
         namespace entrypoints
         {
-            typedef symbol_table<double> symbol_table_t;
-            typedef exprtk::sigpack::package sigpack_package_t;
+            using namespace exprtk::entrypoints;
 
             extern "C"
             {
                 extern bool SymbolTable_AddPackageSigpack(symbol_table_t *symbol_table);
-
             }
 
             EXPRTK_EXPORT bool SymbolTable_AddPackageSigpack(symbol_table_t *symbol_table)
             {
+                typedef exprtk::sigpack::package sigpack_package_t;
                 sigpack_package_t *sigpack_package = new sigpack_package_t();
                 bool ret = symbol_table->add_package(*sigpack_package);
                 fflush(NULL);

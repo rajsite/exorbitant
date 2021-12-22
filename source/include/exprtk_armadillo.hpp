@@ -16,36 +16,38 @@ namespace exprtk
    {
       using namespace arma;
 
-      struct conv : public exprtk::igeneric_function<double>
+      template <typename T>
+      struct conv : public exprtk::igeneric_function<T>
       {
-         typedef typename exprtk::igeneric_function<double> igfun_t;
+         typedef typename exprtk::igeneric_function<T> igfun_t;
          typedef typename igfun_t::parameter_list_t    parameter_list_t;
          typedef typename igfun_t::generic_type        generic_type;
          typedef typename generic_type::scalar_view    scalar_t;
          typedef typename generic_type::vector_view    vector_t;
 
-         conv() : exprtk::igeneric_function<double>("VVV") {}
+         conv() : exprtk::igeneric_function<T>("VVV") {}
 
-         inline double operator() (parameter_list_t parameters)
+         inline T operator() (parameter_list_t parameters)
          {
             vector_t signal1(parameters[0]);
             vector_t signal2(parameters[1]);
             vector_t signalConv(parameters[2]);
 
-            vec A(signal1.begin(), signal1.size(), false, true);
-            vec B(signal2.begin(), signal2.size(), false, true);
+            Col<T> A(signal1.begin(), signal1.size(), false, true);
+            Col<T> B(signal2.begin(), signal2.size(), false, true);
 
-            vec C = arma::conv(A, B);
+            Col<T> C = arma::conv(A, B);
 
-            memcpy(signalConv.begin(), C.memptr(), std::min((size_t)C.size(), signalConv.size()) * sizeof(double));
+            memcpy(signalConv.begin(), C.memptr(), std::min((size_t)C.size(), signalConv.size()) * sizeof(T));
             return 1;
          }
       };
 
+      template <typename T>
       struct package
       {
-         conv conv_f;
-         bool register_package(exprtk::symbol_table<double>& symtab)
+         conv<T> conv_f;
+         bool register_package(exprtk::symbol_table<T>& symtab)
          {
             #define exprtk_register_function(FunctionName,FunctionType)                  \
             if (!symtab.add_function(FunctionName,FunctionType))                         \
