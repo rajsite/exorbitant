@@ -3,7 +3,7 @@ name: exorbitant ci
 on:
   push:
     branches:
-    - 'main'
+    - '*'
 
 jobs:
   build:
