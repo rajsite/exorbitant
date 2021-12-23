@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Milan Raj
 // SPDX-License-Identifier: MIT
 
-import exprtk from '../dist/exprtkcore.js';
+import exprtkcore from '../dist/exprtkcore.js';
 
 // Make sure to use Module.stackSave() before calling
 const writeStringToStack = function (Module, str) {
@@ -59,7 +59,7 @@ export class SymbolTable {
 
     addConstants() {
         const result = this._Module._SymbolTable_AddConstants(this._symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error('Failed to SymbolTable::AddConstants');
         }
@@ -67,7 +67,7 @@ export class SymbolTable {
 
     addPackageIO() {
         const result = this._Module._SymbolTable_AddPackageIO(this._symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error('Failed to SymbolTable::AddPackageIO');
         }
@@ -75,7 +75,7 @@ export class SymbolTable {
 
     addPackageVecops() {
         const result = this._Module._SymbolTable_AddPackageVecops(this._symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error('Failed to SymbolTable::AppPackageVecops');
         }
@@ -83,7 +83,7 @@ export class SymbolTable {
 
     addPackageArmadillo() {
         const result = this._Module._SymbolTable_AddPackageArmadillo(this._symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error('Failed to SymbolTable::AddPackageArmadillo');
         }
@@ -91,7 +91,7 @@ export class SymbolTable {
 
     addPackageSigpack() {
         const result = this._Module._SymbolTable_AddPackageSigpack(this._symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error('Failed to SymbolTable::AddPackageSigpack');
         }
@@ -106,12 +106,12 @@ export class SymbolTable {
         const nameRef = writeStringToStack(this._Module, name);
         const result = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
         this._Module.stackRestore(stack);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error(`Failed to create variable with name ${name}`);
         }
         const ret = new Variable(this._Module, variableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         return ret;
     }
 
@@ -124,12 +124,12 @@ export class SymbolTable {
         const nameRef = writeStringToStack(this._Module, name);
         const result = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
         this._Module.stackRestore(stack);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error(`Failed to create vector with name ${name}`);
         }
         const ret = new Vector(this._Module, vectorRef, size);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         return ret;
     }
 }
@@ -142,12 +142,12 @@ export class Expression {
 
     registerSymbolTable (symbolTable) {
         this._Module._Expression_RegisterSymbolTable(this._expressionRef, symbolTable._symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
     }
 
     value () {
         const ret = this._Module._Expression_Value(this._expressionRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         return ret;
     }
 }
@@ -163,7 +163,7 @@ export class Parser {
         const strRef = writeStringToStack(this._Module, str);
         const result = this._Module._Parser_Compile(this._parserRef, strRef, expression._expressionRef);
         this._Module.stackRestore(stack);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         if (!result) {
             throw new Error(`Failed to compile expression: ${str}`);
         }
@@ -171,7 +171,7 @@ export class Parser {
 
     printError () {
         this._Module._Parser_PrintError(this._parserRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
     }
 }
 
@@ -183,45 +183,44 @@ export class Exprtk {
     createSymbolTable () {
         const symbolTableRef = this._Module._SymbolTable_Create();
         const ret = new SymbolTable(this._Module, symbolTableRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         return ret;
     }
 
     createExpression () {
         const expressionRef = this._Module._Expression_Create();
         const ret = new Expression(this._Module, expressionRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         return ret;
     }
 
     createParser () {
         const parserRef = this._Module._Parser_Create();
         const ret = new Parser(this._Module, parserRef);
-        this._Module.exprtk.flush();
+        this._Module.exprtkcore.flush();
         return ret;
     }
 }
 
 const createModule = function () {
-    const Module = {
-        arguments: ['--exit'],
-        exprtk: {
-            ENVIRONMENT_IS_WEB: typeof window === 'object',
-            ENVIRONMENT_IS_WORKER: typeof importScripts === 'function',
-            ENVIRONMENT_IS_NODE: typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string',
-            wasmUrl: '',
-            flush: undefined
-        }
+    const Module = {};
+    Module.arguments = ['--exit'],
+    Module.exprtkcore = {
+        ENVIRONMENT_IS_WEB: typeof window === 'object',
+        ENVIRONMENT_IS_WORKER: typeof importScripts === 'function',
+        ENVIRONMENT_IS_NODE: typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string',
+        wasmUrl: '',
+        flush: undefined
     };
 
     Module.locateFile = function (path, prefix) {
         if (path.endsWith('.wasm')) {
-            return Module.exprtk.wasmUrl;
+            return Module.exprtkcore.wasmUrl;
         }
         return prefix + path;
     };
 
-    if (Module.exprtk.ENVIRONMENT_IS_NODE) {
+    if (Module.exprtkcore.ENVIRONMENT_IS_NODE) {
         Module.quit = function (status, toThrow) {
             throw toThrow;
         };
@@ -230,8 +229,8 @@ const createModule = function () {
 };
 
 export const createExprtk = async function () {
-    const Module = await exprtk(createModule());
+    const Module = await exprtkcore(createModule());
     const ret = new Exprtk(Module);
-    Module.exprtk.flush();
+    Module.exprtkcore.flush();
     return ret;
 };
