@@ -12,7 +12,7 @@ const importObject = { wasi_snapshot_preview1: wasi.wasiImport };
 // TODO readline isn't blocking?
 
 (async () => {
-    const wasm = await WebAssembly.compile(fs.readFileSync(path.resolve(__dirname, '../../dist/exprtk.wasm')));
+    const wasm = await WebAssembly.compile(fs.readFileSync(path.resolve(__dirname, '../../dist/exprtkcore.wasm')));
     const instance = await WebAssembly.instantiate(wasm, importObject);
 
     wasi.start(instance);
