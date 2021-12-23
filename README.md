@@ -13,10 +13,10 @@ Web calculator library
 ```js
 const {createExprtk} = require('exorbitant');
 (async function () {
-    const exorbitant = await createExprtk();
-    const symbolTable = exorbitant.createSymbolTable();
-    const expression = exorbitant.createExpression();
-    const parser = exorbitant.createParser();
+    const exprtk = await createExprtk();
+    const symbolTable = exprtk.createSymbolTable();
+    const expression = exprtk.createExpression();
+    const parser = exprtk.createParser();
 
     expression.registerSymbolTable(symbolTable);
     parser.compile(`var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
