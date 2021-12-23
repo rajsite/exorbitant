@@ -23,6 +23,7 @@
     "build:development": "make build CONFIGURATION=development",
     "clean": "rimraf dist",
     "test": "npm run example:node",
+    "validate:development": "npm run clean && npm run build:development && npm test",
     "make:bundle": "rollup source/exorbitant.js --format umd --name exorbitant --file dist/exorbitant.umd.js",
     "example:node": "npm run example:node:simple && npm run example:node:variable && npm run example:node:vector && npm run example:node:wasi",
     "example:node:simple": "node example/node/simple.js",
