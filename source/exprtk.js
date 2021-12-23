@@ -36,7 +36,7 @@ export class Vector {
     // Only valid until before another function used. DO NO SAVE REFERENCE.
     // Memory growth due to function execution will invalidate buffer.
     createBufferView () {
-        return new Float64Array(this._Module.HEAP8.buffer, this._vectorRef, this._size);
+        return new Float64Array(this._Module.HEAPF64.buffer, this._vectorRef, this._size);
     }
 
     assign (arrayLike) {
@@ -50,12 +50,51 @@ export class SymbolTable {
     constructor (Module, symbolTableRef) {
         this._Module = Module;
         this._symbolTableRef = symbolTableRef;
-        this._Module._SymbolTable_AddConstants(this._symbolTableRef);
-        this._Module._SymbolTable_AddPackageIO(this._symbolTableRef);
-        this._Module._SymbolTable_AddPackageVecops(this._symbolTableRef);
-        this._Module._SymbolTable_AddPackageArmadillo(this._symbolTableRef);
-        this._Module._SymbolTable_AddPackageSigpack(this._symbolTableRef);
+        this.addConstants();
+        this.addPackageIO();
+        this.addPackageVecops();
+        this.addPackageArmadillo();
+        this.addPackageSigpack();
+    }
+
+    addConstants() {
+        const result = this._Module._SymbolTable_AddConstants(this._symbolTableRef);
         this._Module.exprtk.flush();
+        if (!result) {
+            throw new Error('Failed to SymbolTable::AddConstants');
+        }
+    }
+
+    addPackageIO() {
+        const result = this._Module._SymbolTable_AddPackageIO(this._symbolTableRef);
+        this._Module.exprtk.flush();
+        if (!result) {
+            throw new Error('Failed to SymbolTable::AddPackageIO');
+        }
+    }
+
+    addPackageVecops() {
+        const result = this._Module._SymbolTable_AddPackageVecops(this._symbolTableRef);
+        this._Module.exprtk.flush();
+        if (!result) {
+            throw new Error('Failed to SymbolTable::AppPackageVecops');
+        }
+    }
+
+    addPackageArmadillo() {
+        const result = this._Module._SymbolTable_AddPackageArmadillo(this._symbolTableRef);
+        this._Module.exprtk.flush();
+        if (!result) {
+            throw new Error('Failed to SymbolTable::AddPackageArmadillo');
+        }
+    }
+
+    addPackageSigpack() {
+        const result = this._Module._SymbolTable_AddPackageSigpack(this._symbolTableRef);
+        this._Module.exprtk.flush();
+        if (!result) {
+            throw new Error('Failed to SymbolTable::AddPackageSigpack');
+        }
     }
 
     createVariable (name) {
@@ -65,10 +104,15 @@ export class SymbolTable {
         }
         const stack = this._Module.stackSave();
         const nameRef = writeStringToStack(this._Module, name);
-        const ret = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
+        const result = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
         this._Module.stackRestore(stack);
         this._Module.exprtk.flush();
-        return new Variable(this._Module, variableRef);
+        if (!result) {
+            throw new Error(`Failed to create variable with name ${name}`);
+        }
+        const ret = new Variable(this._Module, variableRef);
+        this._Module.exprtk.flush();
+        return ret;
     }
 
     createVector (name, size) {
@@ -78,10 +122,15 @@ export class SymbolTable {
         }
         const stack = this._Module.stackSave();
         const nameRef = writeStringToStack(this._Module, name);
-        const ret = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
+        const result = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
         this._Module.stackRestore(stack);
         this._Module.exprtk.flush();
-        return new Vector(this._Module, vectorRef, size);
+        if (!result) {
+            throw new Error(`Failed to create vector with name ${name}`);
+        }
+        const ret = new Vector(this._Module, vectorRef, size);
+        this._Module.exprtk.flush();
+        return ret;
     }
 }
 
@@ -112,10 +161,12 @@ export class Parser {
     compile (str, expression) {
         const stack = this._Module.stackSave();
         const strRef = writeStringToStack(this._Module, str);
-        const ret = this._Module._Parser_Compile(this._parserRef, strRef, expression._expressionRef);
+        const result = this._Module._Parser_Compile(this._parserRef, strRef, expression._expressionRef);
         this._Module.stackRestore(stack);
         this._Module.exprtk.flush();
-        return ret;
+        if (!result) {
+            throw new Error(`Failed to compile expression: ${str}`);
+        }
     }
 
     printError () {
@@ -131,20 +182,23 @@ export class Exprtk {
 
     createSymbolTable () {
         const symbolTableRef = this._Module._SymbolTable_Create();
+        const ret = new SymbolTable(this._Module, symbolTableRef);
         this._Module.exprtk.flush();
-        return new SymbolTable(this._Module, symbolTableRef);
+        return ret;
     }
 
     createExpression () {
         const expressionRef = this._Module._Expression_Create();
+        const ret = new Expression(this._Module, expressionRef);
         this._Module.exprtk.flush();
-        return new Expression(this._Module, expressionRef);
+        return ret;
     }
 
     createParser () {
         const parserRef = this._Module._Parser_Create();
+        const ret = new Parser(this._Module, parserRef);
         this._Module.exprtk.flush();
-        return new Parser(this._Module, parserRef);
+        return ret;
     }
 }
 
@@ -177,5 +231,7 @@ const createModule = function () {
 
 export const createExprtk = async function () {
     const Module = await exprtk(createModule());
-    return new Exprtk(Module);
+    const ret = new Exprtk(Module);
+    Module.exprtk.flush();
+    return ret;
 };
