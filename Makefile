@@ -14,10 +14,11 @@ endif
 
 COMPILER           := emcc
 BASE_OPTIONS       := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions
+EM_EXPORTNAME      := exprtkcore
 EM_PREJS           := source/utility/pre.js
 EM_POSTJS          := source/utility/post.js
 EM_EXTERNPREJS     := source/utility/extern-pre.js
-EM_OPT             := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=exprtk --pre-js $(EM_PREJS) --post-js $(EM_POSTJS) --extern-pre-js $(EM_EXTERNPREJS) --minify 0
+EM_OPT             := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE=1 -s EXPORT_ES6=1 --minify 0 -s INVOKE_RUN=1 -s FILESYSTEM=0 -s EXPORT_NAME=$(EM_EXPORTNAME) --pre-js $(EM_PREJS) --post-js $(EM_POSTJS) --extern-pre-js $(EM_EXTERNPREJS) --minify 0
 EM_EXPORTS         := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
 OPTIMIZATION_OPT   := -O3
 ifeq ($(CONFIGURATION), development)
@@ -49,10 +50,10 @@ DEPENDENCIES       :=   Makefile \
 $(DIST):
 	@$(MKDIR) -p $(DIST)
 
-$(DIST)/exprtk.js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
+$(DIST)/$(EM_EXPORTNAME).js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
 	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
-$(DIST)/exorbitant.umd.js: $(DIST)/exprtk.js source/exprtk.js source/exorbitant.js
+$(DIST)/exorbitant.umd.js: $(DIST)/$(EM_EXPORTNAME).js source/exprtk.js source/exorbitant.js
 	npm run make:bundle
 
 .PHONY : build
