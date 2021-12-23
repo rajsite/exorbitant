@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Milan Raj
 // SPDX-License-Identifier: MIT
 
-import exprtk from '../dist/exprtkcore.js';
+import exprtk from '../dist/exprtk.js';
 
 // Make sure to use Module.stackSave() before calling
 const writeStringToStack = function (Module, str) {

@@ -9,8 +9,8 @@ let exprtkWasmUrl;
     var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
 
     if (ENVIRONMENT_IS_WEB) {
-        exprtkWasmUrl = new URL('exprtkcore.wasm', import.meta.url).toString();
+        exprtkWasmUrl = new URL('exprtk.wasm', import.meta.url).toString();
     } else if (ENVIRONMENT_IS_NODE) {
-        exprtkWasmUrl = __dirname + '/exprtkcore.wasm';
+        exprtkWasmUrl = __dirname + '/exprtk.wasm';
     }
 })();
