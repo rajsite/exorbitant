@@ -16,7 +16,19 @@ const writeStringToStack = function (Module, str) {
 };
 
 export class Variable {
-    constructor (Module, variableRef) {
+    constructor (Module, symbolTableRef, name) {
+        const variableRef = Module._malloc(8);
+        if (variableRef === 0) {
+            throw new Error(`Not enough memory to allocate variable ${name}.`);
+        }
+        const stack = Module.stackSave();
+        const nameRef = writeStringToStack(Module, name);
+        const result = Module._SymbolTable_AddVariable(symbolTableRef, nameRef, variableRef);
+        Module.stackRestore(stack);
+        Module.exprtkcore.flush();
+        if (!result) {
+            throw new Error(`Failed to create variable with name ${name}`);
+        }
         this._Module = Module;
         this._variableRef = variableRef;
     }
@@ -31,7 +43,19 @@ export class Variable {
 }
 
 export class Vector {
-    constructor (Module, vectorRef, size) {
+    constructor (Module, symbolTableRef, name, size) {
+        const vectorRef = Module._malloc(size * 8);
+        if (vectorRef === 0) {
+            throw new Error(`Not enough memory to allocate vector ${name} with size ${size}.`);
+        }
+        const stack = Module.stackSave();
+        const nameRef = writeStringToStack(Module, name);
+        const result = Module._SymbolTable_AddVector(symbolTableRef, nameRef, vectorRef, size);
+        Module.stackRestore(stack);
+        Module.exprtkcore.flush();
+        if (!result) {
+            throw new Error(`Failed to create vector with name ${name}`);
+        }
         this._Module = Module;
         this._vectorRef = vectorRef;
         this._size = size;
@@ -51,9 +75,10 @@ export class Vector {
 }
 
 export class SymbolTable {
-    constructor (Module, symbolTableRef) {
+    constructor (Module) {
         this._Module = Module;
-        this._symbolTableRef = symbolTableRef;
+        this._symbolTableRef = this._Module._SymbolTable_Create();
+        this._Module.exprtkcore.flush();
     }
 
     addConstants () {
@@ -97,46 +122,19 @@ export class SymbolTable {
     }
 
     createVariable (name) {
-        const variableRef = this._Module._malloc(8);
-        if (variableRef === 0) {
-            throw new Error(`Not enough memory to allocate variable ${name}.`);
-        }
-        const stack = this._Module.stackSave();
-        const nameRef = writeStringToStack(this._Module, name);
-        const result = this._Module._SymbolTable_AddVariable(this._symbolTableRef, nameRef, variableRef);
-        this._Module.stackRestore(stack);
-        this._Module.exprtkcore.flush();
-        if (!result) {
-            throw new Error(`Failed to create variable with name ${name}`);
-        }
-        const ret = new Variable(this._Module, variableRef);
-        this._Module.exprtkcore.flush();
-        return ret;
+        return new Variable(this._Module, this._symbolTableRef, name);
     }
 
     createVector (name, size) {
-        const vectorRef = this._Module._malloc(size * 8);
-        if (vectorRef === 0) {
-            throw new Error(`Not enough memory to allocate vector ${name} with size ${size}.`);
-        }
-        const stack = this._Module.stackSave();
-        const nameRef = writeStringToStack(this._Module, name);
-        const result = this._Module._SymbolTable_AddVector(this._symbolTableRef, nameRef, vectorRef, size);
-        this._Module.stackRestore(stack);
-        this._Module.exprtkcore.flush();
-        if (!result) {
-            throw new Error(`Failed to create vector with name ${name}`);
-        }
-        const ret = new Vector(this._Module, vectorRef, size);
-        this._Module.exprtkcore.flush();
-        return ret;
+        return new Vector(this._Module, this._symbolTableRef, name, size);
     }
 }
 
 export class Expression {
-    constructor (Module, expressionRef) {
+    constructor (Module) {
         this._Module = Module;
-        this._expressionRef = expressionRef;
+        this._expressionRef = this._Module._Expression_Create();
+        this._Module.exprtkcore.flush();
     }
 
     registerSymbolTable (symbolTable) {
@@ -152,9 +150,10 @@ export class Expression {
 }
 
 export class Parser {
-    constructor (Module, parserRef) {
+    constructor (Module) {
         this._Module = Module;
-        this._parserRef = parserRef;
+        this._parserRef = this._Module._Parser_Create();
+        this._Module.exprtkcore.flush();
     }
 
     compile (str, expression) {
@@ -164,13 +163,11 @@ export class Parser {
         this._Module.stackRestore(stack);
         this._Module.exprtkcore.flush();
         if (!result) {
+            // TODO instead of printing should pass error in exception
+            this._Module._Parser_PrintError(this._parserRef);
+            this._Module.exprtkcore.flush();
             throw new Error(`Failed to compile expression: ${str}`);
         }
-    }
-
-    printError () {
-        this._Module._Parser_PrintError(this._parserRef);
-        this._Module.exprtkcore.flush();
     }
 }
 
@@ -180,24 +177,15 @@ export class Exprtk {
     }
 
     createSymbolTable () {
-        const symbolTableRef = this._Module._SymbolTable_Create();
-        const ret = new SymbolTable(this._Module, symbolTableRef);
-        this._Module.exprtkcore.flush();
-        return ret;
+        return new SymbolTable(this._Module);
     }
 
     createExpression () {
-        const expressionRef = this._Module._Expression_Create();
-        const ret = new Expression(this._Module, expressionRef);
-        this._Module.exprtkcore.flush();
-        return ret;
+        return new Expression(this._Module);
     }
 
     createParser () {
-        const parserRef = this._Module._Parser_Create();
-        const ret = new Parser(this._Module, parserRef);
-        this._Module.exprtkcore.flush();
-        return ret;
+        return new Parser(this._Module);
     }
 }
 

@@ -108,16 +108,23 @@ export class Exorbitant {
 }
 
 export class ExorbitantRuntime {
-    constructor (exprtk) {
-        this._exprtk = exprtk;
+    constructor () {
+        this._exprtk = undefined;
     }
 
-    createExorbitant (configuration) {
+    async createExorbitant (configuration) {
+        if (this._exprtk === undefined) {
+            this._exprtk = await createExprtk();
+        }
         return new Exorbitant(this._exprtk, configuration);
     }
 }
 
-export const createExorbitantRuntime = async function () {
-    const exprtk = await createExprtk();
-    return new ExorbitantRuntime(exprtk);
+let defaultExorbitantRuntime;
+export const createExorbitant = async function (configuration) {
+    if (defaultExorbitantRuntime === undefined) {
+        defaultExorbitantRuntime = new ExorbitantRuntime();
+    }
+    const exorbitant = await defaultExorbitantRuntime.createExorbitant(configuration);
+    return exorbitant;
 };
