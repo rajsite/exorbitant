@@ -33,26 +33,25 @@ const validateVector = function (symbolCache, name) {
 
 const populateSymbolTable = function (symbolTable, configuration) {
     const symbolCache = new Map();
-    if (configuration.symbolTable) {
-        if (configuration.symbolTable.variables) {
+    const isDefined = value => value !== undefined;
+    if (isDefined(configuration.symbolTable)) {
+        if (isDefined(configuration.symbolTable.variables)) {
             for (const variableConfig of configuration.symbolTable.variables) {
                 const variable = symbolTable.createVariable(variableConfig.name);
                 symbolCache.set(variableConfig.name, variable);
 
-                const value = variableConfig.value;
-                if (value !== undefined) {
-                    variable.value = value;
+                if (isDefined(variableConfig.value)) {
+                    variable.value = variableConfig.value;
                 }
             }
         }
-        if (configuration.symbolTable.vectors) {
+        if (isDefined(configuration.symbolTable.vectors)) {
             for (const vectorConfig of configuration.symbolTable.vectors) {
                 const vector = symbolTable.createVector(vectorConfig.name, vectorConfig.size);
                 symbolCache.set(vectorConfig.name, vector);
 
-                const value = vectorConfig.value;
-                if (value !== undefined) {
-                    vector.assign(value);
+                if (isDefined(vectorConfig.value)) {
+                    vector.assign(vectorConfig.value);
                 }
             }
         }
