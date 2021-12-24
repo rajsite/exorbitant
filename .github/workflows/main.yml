@@ -19,7 +19,6 @@ jobs:
         node-version: '15'
         registry-url: 'https://registry.npmjs.org'
     - run: npm ci
-    - run: npm run lint
     - run: chocolatey install make -y
     - run: chocolatey install gnuwin32-coreutils.portable -y
     - run: npm run install:emsdk
@@ -34,3 +33,4 @@ jobs:
         name: exorbitant archive
         path: ./exorbitant-*.tgz
     - run: npm test
+    - run: npm run lint
