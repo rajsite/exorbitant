@@ -12,11 +12,6 @@ ifeq ($(filter $(CONFIGURATION), $(CONFIGURATIONOPTS)),)
 $(error invalid CONFIGURATION value, CONFIGURATION $(CONFIGURATION) not supported, supported configurations are $(CONFIGURATIONOPTS))
 endif
 
-EMSDK              := . imports/emsdk/emsdk_env.sh
-ifeq ($(OS), Windows_NT)
-EMSDK              := imports\emsdk\emsdk_env.bat
-endif
-
 COMPILER           := emcc
 BASE_OPTIONS       := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions
 EM_EXPORTNAME      := exprtkcore
@@ -60,7 +55,7 @@ $(DIST) :
 	@$(MKDIR) -p $(DIST)
 
 $(DIST)/$(EM_EXPORTNAME).js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
-	$(EMSDK) && $(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
+	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
 $(DIST)/types/configuration.js : source/types/configuration.ts
 	npm run make:validator
