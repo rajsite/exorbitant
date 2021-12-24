@@ -12,6 +12,11 @@ ifeq ($(filter $(CONFIGURATION), $(CONFIGURATION_SUPPORTED)),)
 $(error invalid CONFIGURATION value, CONFIGURATION=$(CONFIGURATION) not supported, supported configurations are $(CONFIGURATION_SUPPORTED))
 endif
 
+EMSDK              := . imports/emsdk/emsdk_env.sh
+ifeq ($(OS), Windows_NT)
+EMSDK              := imports\emsdk\emsdk_env.bat
+endif
+
 COMPILER           := emcc
 BASE_OPTIONS       := -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions
 EM_EXPORTNAME      := exprtkcore
@@ -22,7 +27,7 @@ EM_OPT             := -s STANDALONE_WASM -s NO_DYNAMIC_EXECUTION=1 -s MODULARIZE
 EM_EXPORTS         := -s EXPORTED_FUNCTIONS="['_malloc', '_free']" -s EXPORTED_RUNTIME_METHODS="['stackAlloc', 'stackSave', 'stackRestore', 'stringToUTF8', 'UTF8ArrayToString']"
 OPTIMIZATION_OPT   := -O3
 ifeq ($(CONFIGURATION), development)
-   OPTIMIZATION_OPT  := -Dexprtk_disable_enhanced_features -O0 -s ERROR_ON_WASM_CHANGES_AFTER_LINK -s WASM_BIGINT
+OPTIMIZATION_OPT   := -Dexprtk_disable_enhanced_features -O0 -s ERROR_ON_WASM_CHANGES_AFTER_LINK -s WASM_BIGINT
 endif
 LINKER_OPT         := -lm
 EXPRTK_INCLUDE     := imports/exprtk/
@@ -45,13 +50,13 @@ DEPENDENCIES       :=   Makefile \
 						$(EM_POSTJS) \
 						$(EM_EXTERNPREJS)
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL      := build
 
 $(DIST):
 	@$(MKDIR) -p $(DIST)
 
 $(DIST)/$(EM_EXPORTNAME).js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
-	$(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
+	$(EMSDK) && $(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
 $(DIST)/exorbitant.umd.js: $(DIST)/$(EM_EXPORTNAME).js source/exprtk.js source/exorbitant.js
 	npm run make:bundle
