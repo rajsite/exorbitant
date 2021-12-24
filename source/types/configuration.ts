@@ -10,7 +10,9 @@ export type configuration = {
         {
             name: string,
             size: number,
-            value?: number[]
+            // Allow array-like objects (ie Float32Array) or any[]
+            // Use any[] to avoid checking type of each member at runtime
+            value?: {length: number} | any[]
         }[]
     }
 };
