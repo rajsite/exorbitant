@@ -36,6 +36,8 @@ DEPS_INCLUDE       := -isystem $(EXPRTK_INCLUDE) -isystem $(ARMADILLO_INCLUDE) -
 DIST               := dist
 SOURCE             := source/main.cpp
 DEPENDENCIES       :=   Makefile \
+						package.json \
+						package-lock.json \
 						${EXORBITANT_INCLUDE}/exprtk_armadillo_entrypoints.hpp \
 						${EXORBITANT_INCLUDE}/exprtk_armadillo.hpp \
 						${EXORBITANT_INCLUDE}/exprtk_entrypoints.hpp \

@@ -28,7 +28,7 @@
     "validate:development": "npm run clean && npm run build:development && npm test",
     "make:bundle": "rollup source/exorbitant.js --format umd --name exorbitant --plugin @rollup/plugin-commonjs --file dist/exorbitant.umd.js",
     "make:validator": "npm run make:validator:schema && npm run make:validator:js",
-    "make:validator:schema": "ts-json-schema-generator --path source/types/configuration.ts --type configuration -o dist/types/configuration.schema.json",
+    "make:validator:schema": "ts-json-schema-generator --additional-properties true --path source/types/configuration.ts --type configuration -o dist/types/configuration.schema.json",
     "make:validator:js": "ajv compile --strict=true --code-lines -s dist/types/configuration.schema.json -o dist/types/configuration.js",
     "example:node": "npm run example:node:simple && npm run example:node:variable && npm run example:node:vector && npm run example:node:wasi",
     "example:node:simple": "node example/node/simple.js",
