@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Milan Raj
+# Copyright (c) 2021 Milan Raj
 # SPDX-License-Identifier: MIT
 
 # The mkdir command has to be quoted so that it is not intercepted in the windows shell

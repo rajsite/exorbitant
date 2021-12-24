@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Milan Raj
+// Copyright (c) 2021 Milan Raj
 // SPDX-License-Identifier: MIT
 
 const { createExprtk } = require('../../dist/exorbitant.umd.js');
