@@ -23,6 +23,7 @@ jobs:
     - run: chocolatey install gnuwin32-coreutils.portable -y
     - run: npm run install:emsdk
     - run: npm run build
+      shell: cmd
     - run: npm pack
     - name: Upload binaries
       uses: actions/upload-artifact@v2
