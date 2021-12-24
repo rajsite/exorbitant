@@ -11,9 +11,7 @@ const {createExprtk} = require('../../dist/exorbitant.umd.js');
     const parser = exprtk.createParser();
 
     expression.registerSymbolTable(symbolTable);
-    var compileRet = parser.compile(`sum(data)`, expression);
-    parser.printError();
-    console.log(`compiled?: ${compileRet}`);
+    parser.compile(`sum(data)`, expression);
 
     dataVector.assign([0,0,0]);
     var ret = expression.value();

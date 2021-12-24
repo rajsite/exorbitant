@@ -50,11 +50,6 @@ export class SymbolTable {
     constructor (Module, symbolTableRef) {
         this._Module = Module;
         this._symbolTableRef = symbolTableRef;
-        this.addConstants();
-        this.addPackageIO();
-        this.addPackageVecops();
-        this.addPackageArmadillo();
-        this.addPackageSigpack();
     }
 
     addConstants() {
