@@ -3,13 +3,13 @@
 
 # The mkdir command has to be quoted so that it is not intercepted in the windows shell
 # and instead uses the version on PATH (ie that is unix mkdir compatible)
-MKDIR="mkdir"
+MKDIR              := "mkdir"
 
-CONFIGURATION_SUPPORTED=release development
-CONFIGURATION=release
+CONFIGURATIONOPTS  := release development
+CONFIGURATION      := release
 
-ifeq ($(filter $(CONFIGURATION), $(CONFIGURATION_SUPPORTED)),)
-$(error invalid CONFIGURATION value, CONFIGURATION=$(CONFIGURATION) not supported, supported configurations are $(CONFIGURATION_SUPPORTED))
+ifeq ($(filter $(CONFIGURATION), $(CONFIGURATIONOPTS)),)
+$(error invalid CONFIGURATION value, CONFIGURATION $(CONFIGURATION) not supported, supported configurations are $(CONFIGURATIONOPTS))
 endif
 
 EMSDK              := . imports/emsdk/emsdk_env.sh
@@ -49,16 +49,23 @@ DEPENDENCIES       :=   Makefile \
 						$(EM_PREJS) \
 						$(EM_POSTJS) \
 						$(EM_EXTERNPREJS)
+DEPENDENCIESJS     :=   $(DIST)/$(EM_EXPORTNAME).js \
+						source/exprtk.js \
+                        source/exorbitant.js \
+						$(DIST)/types/configuration.js
 
 .DEFAULT_GOAL      := build
 
-$(DIST):
+$(DIST) :
 	@$(MKDIR) -p $(DIST)
 
 $(DIST)/$(EM_EXPORTNAME).js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
 	$(EMSDK) && $(COMPILER) $(OPTIONS) $(DEPS_INCLUDE) $(SOURCE) $(LINKER_OPT) -o $@
 
-$(DIST)/exorbitant.umd.js: $(DIST)/$(EM_EXPORTNAME).js source/exprtk.js source/exorbitant.js
+$(DIST)/types/configuration.js : source/types/configuration.ts
+	npm run make:validator
+
+$(DIST)/exorbitant.umd.js : $(DEPENDENCIESJS)
 	npm run make:bundle
 
 .PHONY : build

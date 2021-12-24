@@ -1,33 +1,12 @@
 import { createExprtk, Variable, Vector } from './exprtk.js';
+import configurationIsValid from '../dist/types/configuration.js';
 
 export * from './exprtk.js';
 
-/*
-configuration: {
-  expression: string,
-  symbolTable?: {
-    variables?: [
-      {
-        name: string,
-        value?: number
-      }
-    ],
-    vectors?: [
-      {
-        name: string,
-        size: number,
-        value?: number[]
-      }
-    ]
-  }
-}
-*/
-
-const validateConfiguration = function () {
-    // do it, see above
-    // maybe combo of https://github.com/vega/ts-json-schema-generator
-    //   or https://transform.tools/typescript-to-json-schema
-    // and ajv?
+const validateConfiguration = function (configuration) {
+    if (!configurationIsValid(configuration)) {
+        throw new Error('Invalid configuration');
+    }
 };
 
 const validateVariable = function (symbolCache, name) {
