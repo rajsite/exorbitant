@@ -12,7 +12,7 @@ export default [
         input: 'source/exorbitant-worker.js',
         output: {
             file: 'dist/exorbitant-worker.js',
-            format: 'iife'
+            format: 'umd'
         }
     },
     {

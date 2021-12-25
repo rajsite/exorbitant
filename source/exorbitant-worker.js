@@ -8,7 +8,7 @@ class ExorbitantRuntime {
 
     async createExorbitant (configuration) {
         const exorbitant = await this._exorbitantRuntimeInProcess.createExorbitant(configuration);
-        return Comlink.expose(exorbitant);
+        return Comlink.proxy(exorbitant);
     }
 }
 
