@@ -1,6 +1,9 @@
 import * as Comlink from '../dist/vendor/comlink.js';
 
-const exorbitantWorkerUrl = new URL('./exorbitant-worker.js', import.meta.url);
+// Workaround to support running as an es6 module. The ralative path is the same for both:
+// 1. Running from exorbitant.js from in source
+// 2. Running from exorbitant.js from in dist
+const exorbitantWorkerUrl = new URL('../dist/exorbitant-worker.js', import.meta.url);
 
 export class ExorbitantRuntime {
     constructor () {
