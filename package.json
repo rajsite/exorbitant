@@ -2,8 +2,8 @@
   "name": "exorbitant",
   "version": "0.0.19",
   "description": "Web calculator library",
-  "main": "dist/exorbitant.umd.js",
-  "module": "source/exorbitant.js",
+  "main": "dist/exorbitant-in-process.umd.js",
+  "module": "source/exorbitant-in-process.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rajsite/exorbitant.git"
@@ -26,10 +26,11 @@
     "build:development": "make build CONFIGURATION=development",
     "clean": "rimraf dist",
     "validate:development": "npm run clean && npm run build:development && npm test",
-    "make:bundle": "rollup source/exorbitant.js --format umd --name exorbitant --plugin @rollup/plugin-commonjs --file dist/exorbitant.umd.js",
-    "make:validator": "npm run make:validator:schema && npm run make:validator:js",
+    "make:bundle": "rollup --config rollup.config.js",
+    "make:validator": "npm run make:validator:schema && npm run make:validator:cjs && npm run make:validator:module",
     "make:validator:schema": "ts-json-schema-generator --additional-properties true --path source/types/configuration.ts --type configuration -o dist/types/configuration.schema.json",
-    "make:validator:js": "ajv compile --strict=true --code-lines -s dist/types/configuration.schema.json -o dist/types/configuration.js",
+    "make:validator:cjs": "ajv compile --strict=true --code-lines -s dist/types/configuration.schema.json -o dist/types/configuration.cjs",
+    "make:validator:module": "rollup dist/types/configuration.cjs --format es --plugin @rollup/plugin-commonjs --file dist/types/configuration.js",
     "example:node": "npm run example:node:simple && npm run example:node:variable && npm run example:node:vector && npm run example:node:wasi",
     "example:node:simple": "node example/node/simple.js",
     "example:node:variable": "node example/node/variable.js",
@@ -47,5 +48,8 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.61.1",
     "ts-json-schema-generator": "^0.97.0"
+  },
+  "dependencies": {
+    "comlink": "^4.3.1"
   }
 }

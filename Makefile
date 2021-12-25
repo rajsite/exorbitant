@@ -47,9 +47,11 @@ DEPENDENCIES       :=   Makefile \
 						$(EM_POSTJS) \
 						$(EM_EXTERNPREJS)
 DEPENDENCIESJS     :=   $(DIST)/$(EM_EXPORTNAME).js \
-						source/exprtk.js \
+						$(DIST)/types/configuration.js \
+                        source/exorbitant-in-process.js \
+                        source/exorbitant-worker.js \
                         source/exorbitant.js \
-						$(DIST)/types/configuration.js
+						source/exprtk.js
 
 .DEFAULT_GOAL      := build
 

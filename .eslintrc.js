@@ -7,6 +7,16 @@ module.exports = {
     },
     overrides: [
         {
+            files: ['source/*.js'],
+            parserOptions: {
+                sourceType: 'module',
+                ecmaVersion: 2020
+            },
+            env: {
+                browser: true
+            }
+        },
+        {
             files: ['example/**/*.js'],
             rules: {
                 'no-console': 'off',

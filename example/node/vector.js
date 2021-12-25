@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Milan Raj
 // SPDX-License-Identifier: MIT
 
-const { createExprtk } = require('../../dist/exorbitant.umd.js');
+const { createExprtk } = require('../../dist/exorbitant-in-process.umd.js');
 
 (async () => {
     const exprtk = await createExprtk();

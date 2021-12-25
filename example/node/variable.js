@@ -1,10 +1,10 @@
 // Copyright (c) 2021 Milan Raj
 // SPDX-License-Identifier: MIT
 
-const { createExorbitant } = require('../../dist/exorbitant.umd.js');
+const { ExorbitantRuntime } = require('../../dist/exorbitant-in-process.umd.js');
 
 (async () => {
-    const exorbitant = await createExorbitant({
+    const exorbitant = await new ExorbitantRuntime().createExorbitant({
         expression: 'a+b',
         symbolTable: {
             variables: [
