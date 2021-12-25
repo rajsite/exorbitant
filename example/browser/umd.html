@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Exorbitant example</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="../../dist/exorbitant-in-process.umd.js"></script>
+    <script src="../../dist/exorbitant-in-process.js"></script>
     <script>
         const {createExprtk} = window.exorbitant;
 
@@ -19,6 +19,11 @@ SPDX-License-Identifier: MIT
             const expression = exprtk.createExpression();
             const parser = exprtk.createParser();
 
+            symbolTable.addConstants();
+            symbolTable.addPackageIO();
+            symbolTable.addPackageVecops();
+            symbolTable.addPackageArmadillo();
+            symbolTable.addPackageSigpack();
             expression.registerSymbolTable(symbolTable);
             parser.compile(`var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
             var ret = expression.value();

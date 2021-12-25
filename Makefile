@@ -48,6 +48,7 @@ DEPENDENCIES       :=   Makefile \
 						$(EM_EXTERNPREJS)
 DEPENDENCIESJS     :=   $(DIST)/$(EM_EXPORTNAME).js \
 						$(DIST)/types/configuration.js \
+						$(DIST)/vendor/comlink.js \
                         source/exorbitant-in-process.js \
                         source/exorbitant-worker.js \
                         source/exorbitant.js \
@@ -64,9 +65,12 @@ $(DIST)/$(EM_EXPORTNAME).js : $(SOURCE) $(DEPENDENCIES) | $(DIST)
 $(DIST)/types/configuration.js : source/types/configuration.ts
 	npm run make:validator
 
-$(DIST)/exorbitant.umd.js : $(DEPENDENCIESJS)
+$(DIST)/vendor/comlink.js : source/vendor/comlink.js
+	npm run make:vendor
+
+$(DIST)/exorbitant.js : $(DEPENDENCIESJS)
 	npm run make:bundle
 
 .PHONY : build
 
-build : $(DIST)/exorbitant.umd.js
+build : $(DIST)/exorbitant.js
