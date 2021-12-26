@@ -5,21 +5,20 @@ import * as Comlink from '../dist/vendor/comlink.js';
 // 2. Running from exorbitant.js from in dist
 const exorbitantWorkerUrl = new URL('../dist/exorbitant-worker.js', import.meta.url);
 
-export class ExorbitantRuntime {
+class ExorbitantRuntimeProxy {
     constructor () {
-        this._worker = undefined;
-        this._exorbitantRuntimeRemote = undefined;
+        this._exorbitantRuntimeWorker = undefined;
     }
 
     async createExorbitant (configuration) {
-        if (this._worker === undefined) {
-            this._worker = new Worker(exorbitantWorkerUrl);
+        if (this._exorbitantRuntimeWorker === undefined) {
+            const worker = new Worker(exorbitantWorkerUrl);
+            const ExorbitantRuntimeWorker = Comlink.wrap(worker);
+            this._exorbitantRuntimeWorker = await new ExorbitantRuntimeWorker();
         }
-        if (this._exorbitantRuntimeRemote === undefined) {
-            const ExorbitantRuntimeRemote = Comlink.wrap(this._worker);
-            this._exorbitantRuntimeRemote = await new ExorbitantRuntimeRemote();
-        }
-        const exorbitant = await this._exorbitantRuntimeRemote.createExorbitant(configuration);
+        const exorbitant = await this._exorbitantRuntimeWorker.createExorbitant(configuration);
         return exorbitant;
     }
 }
+
+export const ExorbitantRuntime = ExorbitantRuntimeProxy;

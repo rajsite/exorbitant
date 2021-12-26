@@ -12,18 +12,18 @@ SPDX-License-Identifier: MIT
     <script src="../../dist/exorbitant-in-process.js"></script>
     <script>
         (async function () {
-            const exprtk = await window.exorbitant.createExprtk();
-            const symbolTable = window.exorbitant.Exprtk.prototype.createSymbolTable.call(exprtk);
-            const expression = window.exorbitant.Exprtk.prototype.createExpression.call(exprtk);
-            const parser = window.exorbitant.Exprtk.prototype.createParser.call(exprtk);
-            window.exorbitant.SymbolTable.prototype.addConstants.call(symbolTable);
-            window.exorbitant.SymbolTable.prototype.addPackageIO.call(symbolTable);
-            window.exorbitant.SymbolTable.prototype.addPackageVecops.call(symbolTable);
-            window.exorbitant.SymbolTable.prototype.addPackageArmadillo.call(symbolTable);
-            window.exorbitant.SymbolTable.prototype.addPackageSigpack.call(symbolTable);
-            window.exorbitant.Expression.prototype.registerSymbolTable.call(expression, symbolTable);
-            window.exorbitant.Parser.prototype.compile.call(parser, `var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
-            var ret = window.exorbitant.Expression.prototype.value.call(expression);
+            const exprtk = await window.exorbitantInProcess.createExprtk();
+            const symbolTable = window.exorbitantInProcess.Exprtk.prototype.createSymbolTable.call(exprtk);
+            const expression = window.exorbitantInProcess.Exprtk.prototype.createExpression.call(exprtk);
+            const parser = window.exorbitantInProcess.Exprtk.prototype.createParser.call(exprtk);
+            window.exorbitantInProcess.SymbolTable.prototype.addConstants.call(symbolTable);
+            window.exorbitantInProcess.SymbolTable.prototype.addPackageIO.call(symbolTable);
+            window.exorbitantInProcess.SymbolTable.prototype.addPackageVecops.call(symbolTable);
+            window.exorbitantInProcess.SymbolTable.prototype.addPackageArmadillo.call(symbolTable);
+            window.exorbitantInProcess.SymbolTable.prototype.addPackageSigpack.call(symbolTable);
+            window.exorbitantInProcess.Expression.prototype.registerSymbolTable.call(expression, symbolTable);
+            window.exorbitantInProcess.Parser.prototype.compile.call(parser, `var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
+            var ret = window.exorbitantInProcess.Expression.prototype.value.call(expression);
             console.log(`ret: ${ret}`);
         }());
     </script>

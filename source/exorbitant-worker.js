@@ -1,15 +1,18 @@
 import * as Comlink from '../dist/vendor/comlink.js';
-import { ExorbitantRuntime as ExorbitantRuntimeInProcess } from './exorbitant-in-process.js';
+import { ExorbitantRuntime } from './exorbitant-in-process.js';
 
-class ExorbitantRuntime {
+class ExorbitantRuntimeWorker {
     constructor () {
-        this._exorbitantRuntimeInProcess = new ExorbitantRuntimeInProcess();
+        this._exorbitantRuntime = undefined;
     }
 
     async createExorbitant (configuration) {
-        const exorbitant = await this._exorbitantRuntimeInProcess.createExorbitant(configuration);
+        if (this._exorbitantRuntime === undefined) {
+            this._exorbitantRuntime = new ExorbitantRuntime();
+        }
+        const exorbitant = await this._exorbitantRuntime.createExorbitant(configuration);
         return Comlink.proxy(exorbitant);
     }
 }
 
-Comlink.expose(ExorbitantRuntime);
+Comlink.expose(ExorbitantRuntimeWorker);
