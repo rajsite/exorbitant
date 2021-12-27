@@ -1,4 +1,4 @@
-import { createExprtk, Variable, Vector } from './exprtk.js';
+import { createExprtk } from './exprtk.js';
 import configurationIsValid from '../dist/types/configuration.js';
 
 export * from './exprtk.js';
@@ -9,36 +9,45 @@ const validateConfiguration = function (configuration) {
     }
 };
 
-const validateVariable = function (symbolCache, name) {
-    const variable = symbolCache.get(name);
-    if (!variable) {
-        throw new Error(`No symbol found with name: ${name}`);
+class SymbolCache {
+    constructor () {
+        this._variableMap = new Map();
+        this._vectorMap = new Map();
     }
-    if (!(variable instanceof Variable)) {
-        throw new Error(`Symbol with following name is not a valid variable: ${name}`);
-    }
-    return variable;
-};
 
-const validateVector = function (symbolCache, name) {
-    const vector = symbolCache.get(name);
-    if (!vector) {
-        throw new Error(`No symbol found with name: ${name}`);
+    getVariable (name) {
+        const variable = this._variableMap.get(name);
+        if (!variable) {
+            throw new Error(`Symbol with following name is not a valid variable: ${name}`);
+        }
+        return variable;
     }
-    if (!(vector instanceof Vector)) {
-        throw new Error(`Symbol with following name is not a valid vector: ${name}`);
+
+    setVariable (name, variable) {
+        this._variableMap.set(name, variable);
     }
-    return vector;
-};
+
+    getVector (name) {
+        const vector = this._vectorMap.get(name);
+        if (!vector) {
+            throw new Error(`Symbol with following name is not a valid vector: ${name}`);
+        }
+        return vector;
+    }
+
+    setVector (name, vector) {
+        this._vectorMap.set(name, vector);
+    }
+}
 
 const populateSymbolTable = function (symbolTable, configuration) {
-    const symbolCache = new Map();
+    const symbolCache = new SymbolCache();
     const isDefined = value => value !== undefined;
     if (isDefined(configuration.symbolTable)) {
         if (isDefined(configuration.symbolTable.variables)) {
             for (const variableConfig of configuration.symbolTable.variables) {
                 const variable = symbolTable.createVariable(variableConfig.name);
-                symbolCache.set(variableConfig.name, variable);
+                symbolCache.setVariable(variableConfig.name, variable);
 
                 if (isDefined(variableConfig.value)) {
                     variable.value = variableConfig.value;
@@ -48,7 +57,7 @@ const populateSymbolTable = function (symbolTable, configuration) {
         if (isDefined(configuration.symbolTable.vectors)) {
             for (const vectorConfig of configuration.symbolTable.vectors) {
                 const vector = symbolTable.createVector(vectorConfig.name, vectorConfig.size);
-                symbolCache.set(vectorConfig.name, vector);
+                symbolCache.setVector(vectorConfig.name, vector);
 
                 if (isDefined(vectorConfig.value)) {
                     vector.assign(vectorConfig.value);
@@ -60,7 +69,7 @@ const populateSymbolTable = function (symbolTable, configuration) {
 };
 
 // NOTE: All parameters return values should be structured cloneable to support Comlink
-export class Exorbitant {
+class Exorbitant {
     constructor (exprtk, configuration) {
         validateConfiguration(configuration);
 
@@ -81,24 +90,24 @@ export class Exorbitant {
     }
 
     getVariable (name) {
-        const variable = validateVariable(this._symbolCache, name);
+        const variable = this._symbolCache.getVariable(name);
         return variable.value;
     }
 
     setVariable (name, value) {
-        const variable = validateVariable(this._symbolCache, name);
+        const variable = this._symbolCache.getVariable(name);
         variable.value = value;
     }
 
     getVector (name) {
-        const vector = validateVector(this._symbolCache, name);
+        const vector = this._symbolCache.getVector(name);
         const vectorBufferView = vector.createBufferView();
         const vectorCopy = new Float64Array(vectorBufferView);
         return vectorCopy;
     }
 
     setVector (name, value) {
-        const vector = validateVector(this._symbolCache, name);
+        const vector = this._symbolCache.getVector(name);
         vector.assign(value);
     }
 
@@ -107,7 +116,7 @@ export class Exorbitant {
     }
 }
 
-export class ExorbitantRuntime {
+class ExorbitantRuntime {
     constructor () {
         this._exprtk = undefined;
     }
@@ -119,3 +128,7 @@ export class ExorbitantRuntime {
         return new Exorbitant(this._exprtk, configuration);
     }
 }
+
+export const createExorbitantRuntime = function () {
+    return new ExorbitantRuntime();
+};

@@ -15,7 +15,7 @@ const writeStringToStack = function (Module, str) {
     return strStackPointer;
 };
 
-export class Variable {
+class Variable {
     constructor (Module, symbolTableRef, name) {
         const variableRef = Module._malloc(8);
         if (variableRef === 0) {
@@ -42,7 +42,7 @@ export class Variable {
     }
 }
 
-export class Vector {
+class Vector {
     constructor (Module, symbolTableRef, name, size) {
         const vectorRef = Module._malloc(size * 8);
         if (vectorRef === 0) {
@@ -74,7 +74,7 @@ export class Vector {
     }
 }
 
-export class SymbolTable {
+class SymbolTable {
     constructor (Module) {
         this._Module = Module;
         this._symbolTableRef = this._Module._SymbolTable_Create();
@@ -130,7 +130,7 @@ export class SymbolTable {
     }
 }
 
-export class Expression {
+class Expression {
     constructor (Module) {
         this._Module = Module;
         this._expressionRef = this._Module._Expression_Create();
@@ -149,7 +149,7 @@ export class Expression {
     }
 }
 
-export class Parser {
+class Parser {
     constructor (Module) {
         this._Module = Module;
         this._parserRef = this._Module._Parser_Create();
@@ -171,7 +171,7 @@ export class Parser {
     }
 }
 
-export class Exprtk {
+class Exprtk {
     constructor (Module) {
         this._Module = Module;
     }

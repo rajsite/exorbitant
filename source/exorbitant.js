@@ -12,13 +12,16 @@ class ExorbitantRuntimeProxy {
 
     async createExorbitant (configuration) {
         if (this._exorbitantRuntimeWorker === undefined) {
+            // Creates a new worker for each exorbitant runtime so the wasm module is not loaded twice in the same worker
             const worker = new Worker(exorbitantWorkerUrl);
-            const ExorbitantRuntimeWorker = Comlink.wrap(worker);
-            this._exorbitantRuntimeWorker = await new ExorbitantRuntimeWorker();
+            const createExorbitantRuntimeWorker = Comlink.wrap(worker);
+            this._exorbitantRuntimeWorker = await createExorbitantRuntimeWorker();
         }
         const exorbitant = await this._exorbitantRuntimeWorker.createExorbitant(configuration);
         return exorbitant;
     }
 }
 
-export const ExorbitantRuntime = ExorbitantRuntimeProxy;
+export const createExorbitantRuntime = function () {
+    return new ExorbitantRuntimeProxy();
+};
