@@ -1,6 +1,6 @@
 {
   "name": "exorbitant",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Web calculator library",
   "main": "dist/exorbitant-in-process.js",
   "module": "source/exorbitant-in-process.js",
