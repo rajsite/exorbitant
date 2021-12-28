@@ -14,11 +14,14 @@ SPDX-License-Identifier: MIT
         const {createExorbitantRuntime} = window.exorbitant;
 
         (async () => {
-            const exorbitant = await createExorbitantRuntime().createExorbitant({
+            const exorbitantRuntime = createExorbitantRuntime();
+            const exorbitant = await exorbitantRuntime.createExorbitant({
                 expression: 'var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);'
             });
             const ret = await exorbitant.value();
             console.log(`ret: ${ret}`);
+            await exorbitant.destroy();
+            await exorbitantRuntime.destroy();
         })().catch(ex => console.log(ex));
     </script>
 </head>

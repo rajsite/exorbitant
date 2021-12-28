@@ -22,16 +22,20 @@ int main(int argc, char* argv[])
       }
    }
    symbol_table_t *symbol_table = SymbolTable_Create();
+   io_package_t *io_package = PackageIO_Create();
+   vecops_package_t *vecops_package = PackageVecops_Create();
+   armadillo_package_t *armadillo_package = PackageArmadillo_Create();
+   sigpack_package_t *sigpack_package = PackageSigpack_Create();
 
    double x = 0.0;
    double y = 0.0;
    double z = 0.0;
 
    SymbolTable_AddConstants(symbol_table);
-   SymbolTable_AddPackageIO(symbol_table);
-   SymbolTable_AddPackageVecops(symbol_table);
-   SymbolTable_AddPackageArmadillo(symbol_table);
-   SymbolTable_AddPackageSigpack(symbol_table);
+   SymbolTable_AddPackageIO(symbol_table, io_package);
+   SymbolTable_AddPackageVecops(symbol_table, vecops_package);
+   SymbolTable_AddPackageArmadillo(symbol_table, armadillo_package);
+   SymbolTable_AddPackageSigpack(symbol_table, sigpack_package);
    SymbolTable_AddVariable(symbol_table, "x", &x);
    SymbolTable_AddVariable(symbol_table, "y", &y);
    SymbolTable_AddVariable(symbol_table, "z", &z);

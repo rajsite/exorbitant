@@ -6,6 +6,13 @@ class ExorbitantRuntimeWorker {
         this._exorbitantRuntime = undefined;
     }
 
+    destroy () {
+        if (this._exorbitantRuntime) {
+            this._exorbitantRuntime.destroy();
+            this._exorbitantRuntime = undefined;
+        }
+    }
+
     async createExorbitant (configuration) {
         if (this._exorbitantRuntime === undefined) {
             this._exorbitantRuntime = createExorbitantRuntime();

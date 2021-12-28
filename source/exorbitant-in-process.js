@@ -10,9 +10,44 @@ const validateConfiguration = function (configuration) {
 };
 
 class SymbolCache {
-    constructor () {
+    constructor (symbolTable, symbolTableConfig) {
         this._variableMap = new Map();
         this._vectorMap = new Map();
+
+        const isDefined = value => value !== undefined;
+        if (isDefined(symbolTableConfig)) {
+            if (isDefined(symbolTableConfig.variables)) {
+                for (const variableConfig of symbolTableConfig.variables) {
+                    const variable = symbolTable.createVariable(variableConfig.name);
+                    this._variableMap.set(variableConfig.name, variable);
+
+                    if (isDefined(variableConfig.value)) {
+                        variable.value = variableConfig.value;
+                    }
+                }
+            }
+            if (isDefined(symbolTableConfig.vectors)) {
+                for (const vectorConfig of symbolTableConfig.vectors) {
+                    const vector = symbolTable.createVector(vectorConfig.name, vectorConfig.size);
+                    this._vectorMap.set(vectorConfig.name, vector);
+
+                    if (isDefined(vectorConfig.value)) {
+                        vector.assign(vectorConfig.value);
+                    }
+                }
+            }
+        }
+    }
+
+    destroy () {
+        for (const [, variable] of this._variableMap) {
+            variable.destroy();
+        }
+        this._variableMap = undefined;
+        for (const [, vector] of this._vectorMap) {
+            vector.destroy();
+        }
+        this._vectorMap = undefined;
     }
 
     getVariable (name) {
@@ -23,10 +58,6 @@ class SymbolCache {
         return variable;
     }
 
-    setVariable (name, variable) {
-        this._variableMap.set(name, variable);
-    }
-
     getVector (name) {
         const vector = this._vectorMap.get(name);
         if (!vector) {
@@ -34,39 +65,7 @@ class SymbolCache {
         }
         return vector;
     }
-
-    setVector (name, vector) {
-        this._vectorMap.set(name, vector);
-    }
 }
-
-const populateSymbolTable = function (symbolTable, configuration) {
-    const symbolCache = new SymbolCache();
-    const isDefined = value => value !== undefined;
-    if (isDefined(configuration.symbolTable)) {
-        if (isDefined(configuration.symbolTable.variables)) {
-            for (const variableConfig of configuration.symbolTable.variables) {
-                const variable = symbolTable.createVariable(variableConfig.name);
-                symbolCache.setVariable(variableConfig.name, variable);
-
-                if (isDefined(variableConfig.value)) {
-                    variable.value = variableConfig.value;
-                }
-            }
-        }
-        if (isDefined(configuration.symbolTable.vectors)) {
-            for (const vectorConfig of configuration.symbolTable.vectors) {
-                const vector = symbolTable.createVector(vectorConfig.name, vectorConfig.size);
-                symbolCache.setVector(vectorConfig.name, vector);
-
-                if (isDefined(vectorConfig.value)) {
-                    vector.assign(vectorConfig.value);
-                }
-            }
-        }
-    }
-    return symbolCache;
-};
 
 // NOTE: All parameters return values should be structured cloneable to support Comlink
 class Exorbitant {
@@ -80,13 +79,24 @@ class Exorbitant {
         this._symbolTable.addPackageArmadillo();
         this._symbolTable.addPackageSigpack();
 
-        this._symbolCache = populateSymbolTable(this._symbolTable, configuration);
+        this._symbolCache = new SymbolCache(this._symbolTable, configuration.symbolTable);
 
         this._expression = exprtk.createExpression();
         this._expression.registerSymbolTable(this._symbolTable);
 
         this._parser = exprtk.createParser();
         this._parser.compile(configuration.expression, this._expression);
+    }
+
+    destroy () {
+        this._symbolTable.destroy();
+        this._symbolTable = undefined;
+        this._symbolCache.destroy();
+        this._symbolCache = undefined;
+        this._expression.destroy();
+        this._expression = undefined;
+        this._parser.destroy();
+        this._parser = undefined;
     }
 
     getVariable (name) {
@@ -119,6 +129,13 @@ class Exorbitant {
 class ExorbitantRuntime {
     constructor () {
         this._exprtk = undefined;
+    }
+
+    destroy () {
+        if (this._exprtk) {
+            this._exprtk.destroy();
+            this._exprtk = undefined;
+        }
     }
 
     async createExorbitant (configuration) {

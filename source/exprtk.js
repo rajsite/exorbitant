@@ -33,6 +33,12 @@ class Variable {
         this._variableRef = variableRef;
     }
 
+    destroy () {
+        this._Module._free(this._variableRef);
+        this._variableRef = undefined;
+        this._Module = undefined;
+    }
+
     set value (number) {
         this._Module.HEAPF64[this._variableRef / 8] = number;
     }
@@ -61,6 +67,13 @@ class Vector {
         this._size = size;
     }
 
+    destroy () {
+        this._Module._free(this._vectorRef);
+        this._vectorRef = undefined;
+        this._size = undefined;
+        this._Module = undefined;
+    }
+
     // Only valid until before another function used. DO NO SAVE REFERENCE.
     // Memory growth due to function execution will invalidate buffer.
     createBufferView () {
@@ -78,46 +91,97 @@ class SymbolTable {
     constructor (Module) {
         this._Module = Module;
         this._symbolTableRef = this._Module._SymbolTable_Create();
+        this._packageIORef = undefined;
+        this._packageVecopsRef = undefined;
+        this._packageArmadilloRef = undefined;
+        this._packageSigpackRef = undefined;
         this._Module.exprtkcore.flush();
+    }
+
+    destroy () {
+        this._Module._SymbolTable_Destroy(this._symbolTableRef);
+        this._symbolTableRef = undefined;
+        if (this._packageIORef) {
+            this._Module._PackageIO_Destroy(this._packageIORef);
+            this._packageIORef = undefined;
+        }
+        if (this._packageVecopsRef) {
+            this._Module._PackageVecops_Destroy(this._packageVecopsRef);
+            this._packageVecopsRef = undefined;
+        }
+        if (this._packageArmadilloRef) {
+            this._Module._PackageArmadillo_Destroy(this._packageArmadilloRef);
+            this._packageArmadilloRef = undefined;
+        }
+        if (this._packageSigpackRef) {
+            this._Module._PackageSigpack_Destroy(this._packageSigpackRef);
+            this._packageSigpackRef = undefined;
+        }
+        this._Module.exprtkcore.flush();
+        this._Module = undefined;
     }
 
     addConstants () {
         const result = this._Module._SymbolTable_AddConstants(this._symbolTableRef);
         this._Module.exprtkcore.flush();
         if (!result) {
-            throw new Error('Failed to SymbolTable::AddConstants');
+            throw new Error('Failed to add constants to symbol table');
         }
     }
 
     addPackageIO () {
-        const result = this._Module._SymbolTable_AddPackageIO(this._symbolTableRef);
+        if (this._packageIORef) {
+            throw new Error('Package IO already defined in symbol table');
+        }
+        this._packageIORef = this._Module._PackageIO_Create();
+        const result = this._Module._SymbolTable_AddPackageIO(this._symbolTableRef, this._packageIORef);
         this._Module.exprtkcore.flush();
         if (!result) {
-            throw new Error('Failed to SymbolTable::AddPackageIO');
+            this._Module._PackageIO_Destroy(this._packageIORef);
+            this._packageIORef = undefined;
+            throw new Error('Failed to add package IO to symbol table');
         }
     }
 
     addPackageVecops () {
-        const result = this._Module._SymbolTable_AddPackageVecops(this._symbolTableRef);
+        if (this._packageVecopsRef) {
+            throw new Error('Package Vecops already defined in symbol table');
+        }
+        this._packageVecopsRef = this._Module._PackageVecops_Create();
+        const result = this._Module._SymbolTable_AddPackageVecops(this._symbolTableRef, this._packageVecopsRef);
         this._Module.exprtkcore.flush();
         if (!result) {
-            throw new Error('Failed to SymbolTable::AppPackageVecops');
+            this._Module._PackageVecops_Destroy(this._packageVecopsRef);
+            this._packageVecopsRef = undefined;
+            throw new Error('Failed to add package Vecops to symbol table');
         }
     }
 
     addPackageArmadillo () {
-        const result = this._Module._SymbolTable_AddPackageArmadillo(this._symbolTableRef);
+        if (this._packageArmadilloRef) {
+            throw new Error('Package Armadillo already defined in symbol table');
+        }
+        this._packageArmadilloRef = this._Module._PackageArmadillo_Create();
+        const result = this._Module._SymbolTable_AddPackageArmadillo(this._symbolTableRef, this._packageArmadilloRef);
         this._Module.exprtkcore.flush();
         if (!result) {
-            throw new Error('Failed to SymbolTable::AddPackageArmadillo');
+            this._Module._PackageAramadillo_Destroy(this._packageArmadilloRef);
+            this._packageArmadilloRef = undefined;
+            throw new Error('Failed to add package Armadillo to symbol table');
         }
     }
 
     addPackageSigpack () {
-        const result = this._Module._SymbolTable_AddPackageSigpack(this._symbolTableRef);
+        if (this._packageSigpackRef) {
+            throw new Error('Package Sigpack already defined in symbol table');
+        }
+        this._packageSigpackRef = this._Module._PackageSigpack_Create();
+        const result = this._Module._SymbolTable_AddPackageSigpack(this._symbolTableRef, this._packageSigpackRef);
         this._Module.exprtkcore.flush();
         if (!result) {
-            throw new Error('Failed to SymbolTable::AddPackageSigpack');
+            this._Module._PackageSigpack_Destroy(this._packageSigpackRef);
+            this._packageSigpackRef = undefined;
+            throw new Error('Failed to add package Sigpack to symbol table');
         }
     }
 
@@ -135,6 +199,13 @@ class Expression {
         this._Module = Module;
         this._expressionRef = this._Module._Expression_Create();
         this._Module.exprtkcore.flush();
+    }
+
+    destroy () {
+        this._Module._Expression_Destroy(this._expressionRef);
+        this._Module.exprtkcore.flush();
+        this._expressionRef = undefined;
+        this._Module = undefined;
     }
 
     registerSymbolTable (symbolTable) {
@@ -156,6 +227,13 @@ class Parser {
         this._Module.exprtkcore.flush();
     }
 
+    destroy () {
+        this._Module._Parser_Destroy(this._parserRef);
+        this._Module.exprtkcore.flush();
+        this._parserRef = undefined;
+        this._Module = undefined;
+    }
+
     compile (str, expression) {
         const stack = this._Module.stackSave();
         const strRef = writeStringToStack(this._Module, str);
@@ -174,6 +252,10 @@ class Parser {
 class Exprtk {
     constructor (Module) {
         this._Module = Module;
+    }
+
+    destroy () {
+        this._Module = undefined;
     }
 
     createSymbolTable () {
