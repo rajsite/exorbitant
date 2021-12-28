@@ -12,4 +12,7 @@ const { createExorbitantRuntime } = require('../../dist/exorbitant-in-process.js
     console.log(`ret: ${ret}`);
     exorbitant.destroy();
     exorbitantRuntime.destroy();
-})().catch(ex => console.log(ex));
+})().catch(ex => {
+    console.error(ex);
+    process.exit(1);
+});

@@ -11,15 +11,14 @@ Web calculator library
 
 ## Example node usage
 ```js
-const {createExprtk} = require('exorbitant');
-(async function () {
-    const exprtk = await createExprtk();
-    const symbolTable = exprtk.createSymbolTable();
-    const expression = exprtk.createExpression();
-    const parser = exprtk.createParser();
-
-    expression.registerSymbolTable(symbolTable);
-    parser.compile(`var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);`, expression);
-    expression.value();
-}()).catch(ex => console.log(ex));
+const {createExorbitantRuntime} = require('exorbitant');
+(async () => {
+    const exorbitant = await createExorbitantRuntime().createExorbitant({
+        expression: 'var a[15]:={1}; var b[8]; fir1(7,0.35,b); var c[22]; conv(a,b,c); print(c);'
+    });
+    exorbitant.value();
+})().catch(ex => {
+    console.error(ex);
+    process.exit(1);
+});
 ```

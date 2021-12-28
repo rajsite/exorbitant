@@ -21,4 +21,7 @@ const { createExorbitantRuntime } = require('../../dist/exorbitant-in-process.js
 
     const ret2 = exorbitant.value();
     console.log(`ret (expect 6): ${ret2}`);
-})().catch(ex => console.log(ex));
+})().catch(ex => {
+    console.error(ex);
+    process.exit(1);
+});

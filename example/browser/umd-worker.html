@@ -22,7 +22,7 @@ SPDX-License-Identifier: MIT
             console.log(`ret: ${ret}`);
             await exorbitant.destroy();
             await exorbitantRuntime.destroy();
-        })().catch(ex => console.log(ex));
+        })().catch(ex => console.error(ex));
     </script>
 </head>
 <body>
