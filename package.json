@@ -38,7 +38,7 @@
     "example:node:variable": "node example/node/variable.js",
     "example:node:vector": "node example/node/vector.js",
     "example:node:wasi": "node --experimental-wasi-unstable-preview1 --experimental-wasm-bigint example/node/wasi.js",
-    "example:wasmer": "wasmer run --disable-cache dist/exprtk.wasm",
+    "example:wasmer": "wasmer run --disable-cache dist/exprtkcore.wasm",
     "install:emsdk": "cd imports/emsdk && emsdk install 3.0.1 && emsdk activate 3.0.1"
   },
   "devDependencies": {

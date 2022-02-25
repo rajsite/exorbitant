@@ -1,6 +1,6 @@
 [package]
 name = "rajsite/exorbitant"
-version = "0.0.15"
+version = "0.0.20"
 description = "Web calculator library"
 license = "MIT"
 repository = "git+https://github.com/rajsite/exorbitant.git"
