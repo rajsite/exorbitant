@@ -3,6 +3,9 @@
 
 #include <exprtk.hpp>
 #include <armadillo>
+
+// Prevent the GPLOT import (uses popen calls)
+#define SP_GPLOT_H
 #include <sigpack.h>
 
 #ifdef exprtk_enable_debugging
