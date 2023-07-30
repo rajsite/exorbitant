@@ -14,18 +14,14 @@ jobs:
       with:
         submodules: true
     - name: Setup Node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
-        node-version: '15'
+        node-version: '18'
         registry-url: 'https://registry.npmjs.org'
     - run: npm ci
     - run: choco install make -y
     - run: choco install gnuwin32-coreutils.portable -y
-    - run: npm run install:emsdk
-    - name: Build
-      run: |
-        imports\emsdk\emsdk_env.ps1
-        npm run build
+    - run: make
     - run: npm pack
     - name: Upload binaries
       uses: actions/upload-artifact@v2
