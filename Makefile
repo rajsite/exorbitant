@@ -13,7 +13,7 @@ $(error invalid CONFIGURATION value, CONFIGURATION $(CONFIGURATION) not supporte
 endif
 
 COMPILER           := wasi-sdk/bin/clang++
-BASE_OPTIONS       := --sysroot=wasi-sdk/share/wasi-sysroot -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions
+BASE_OPTIONS       := --sysroot=wasi-sdk/share/wasi-sysroot -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 OPTIMIZATION_OPT   := -O3
 ifeq ($(CONFIGURATION), development)
 OPTIMIZATION_OPT   := -Dexprtk_disable_enhanced_features -O0

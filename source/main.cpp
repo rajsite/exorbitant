@@ -9,6 +9,16 @@
 #include <exprtk_armadillo_entrypoints.hpp>
 #include <exprtk_sigpack_entrypoints.hpp>
 
+extern "C" {
+   void __cxa_allocate_exception() {
+      abort();
+   }
+
+   void __cxa_throw() {
+      abort();
+   }
+}
+
 int main(int argc, char* argv[])
 {
    using namespace exprtk::entrypoints;
