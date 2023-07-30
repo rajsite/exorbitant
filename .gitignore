@@ -107,3 +107,5 @@ wapm_packages
 
 .vscode/*
 !.vscode/c_cpp_properties.json
+
+wasi-sdk*

@@ -39,7 +39,9 @@
     "example:node:vector": "node example/node/vector.js",
     "example:node:wasi": "node --experimental-wasi-unstable-preview1 --experimental-wasm-bigint example/node/wasi.js",
     "example:wasmer": "wasmer run --disable-cache dist/exprtkcore.wasm",
-    "install:emsdk": "cd imports/emsdk && emsdk install 3.0.1 && emsdk activate 3.0.1"
+    "install:emsdk": "cd imports/emsdk && emsdk install 3.0.1 && emsdk activate 3.0.1",
+    "install:wasisdk:win": "curl -L https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0.m-mingw.tar.gz --output wasi-sdk.tar.gz && tar xvf wasi-sdk.tar.gz --strip-components=1 -C wasi-sdk",
+    "install:wasisdk:linux": "curl -L https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz --output wasi-sdk.tar.gz && tar xvf wasi-sdk.tar.gz --strip-components=1 -C wasi-sdk"
   },
   "devDependencies": {
     "@ni/eslint-config-javascript": "^3.0.1",
@@ -47,6 +49,7 @@
     "@rollup/plugin-node-resolve": "^13.1.1",
     "ajv-cli": "^5.0.0",
     "comlink": "^4.3.1",
+    "mkdirp": "^3.0.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.61.1",
     "ts-json-schema-generator": "^0.97.0"
