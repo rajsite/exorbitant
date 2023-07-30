@@ -9,8 +9,6 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - run: choc install make -y
-    - run: choco install gnuwin32-coreutils.portable -y
     - name: Checkout repository
       uses: actions/checkout@v1
       with:
@@ -21,6 +19,8 @@ jobs:
         node-version: '15'
         registry-url: 'https://registry.npmjs.org'
     - run: npm ci
+    - run: chocolatey install make -y
+    - run: chocolatey install gnuwin32-coreutils.portable -y
     - run: npm run install:emsdk
     - name: Build
       run: |
