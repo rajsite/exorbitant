@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - run: choco install make -y
+    - run: choc install make -y
     - run: choco install gnuwin32-coreutils.portable -y
     - name: Checkout repository
       uses: actions/checkout@v1
