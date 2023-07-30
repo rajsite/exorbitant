@@ -19,6 +19,7 @@ jobs:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
     - run: npm ci
+    - run: npm run install:wasi-sdk:win
     - run: choco install make -y
     - run: choco install gnuwin32-coreutils.portable -y
     - run: make
