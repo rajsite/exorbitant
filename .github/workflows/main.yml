@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
     steps:
     - name: Checkout repository
       uses: actions/checkout@v1
@@ -27,7 +24,7 @@ jobs:
     - run: npm run install:emsdk
     - name: Build
       run: |
-        imports\emsdk\emsdk_env.bat
+        imports\emsdk\emsdk_env.ps1
         npm run build
     - run: npm pack
     - name: Upload binaries
