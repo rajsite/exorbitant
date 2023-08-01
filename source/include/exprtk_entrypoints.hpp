@@ -4,7 +4,7 @@
 #include <exprtk.hpp>
 
 #ifndef EXPRTK_EXPORT
-#define EXPRTK_EXPORT extern "C" __attribute__((used))
+#define EXPRTK_EXPORT(EXPORTNAME) extern "C" __attribute__((export_name(EXPORTNAME)))
 #endif
 
 namespace exprtk
@@ -39,64 +39,64 @@ namespace exprtk
             extern void Parser_PrintError(parser_t *parser);
         }
 
-        EXPRTK_EXPORT symbol_table_t *SymbolTable_Create()
+        EXPRTK_EXPORT("SymbolTable_Create") symbol_table_t *SymbolTable_Create()
         {
             symbol_table_t *symbol_table = new symbol_table_t();
             fflush(NULL);
             return symbol_table;
         }
 
-        EXPRTK_EXPORT void SymbolTable_Destroy(symbol_table_t *symbol_table) {
+        EXPRTK_EXPORT("SymbolTable_Destroy") void SymbolTable_Destroy(symbol_table_t *symbol_table) {
             delete symbol_table;
             fflush(NULL);
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddConstants(symbol_table_t *symbol_table)
+        EXPRTK_EXPORT("SymbolTable_AddConstants") bool SymbolTable_AddConstants(symbol_table_t *symbol_table)
         {
             bool ret = symbol_table->add_constants();
             fflush(NULL);
             return ret;
         }
 
-        EXPRTK_EXPORT io_package_t *PackageIO_Create() {
+        EXPRTK_EXPORT("PackageIO_Create") io_package_t *PackageIO_Create() {
             io_package_t *io_package = new io_package_t();
             fflush(NULL);
             return io_package;
         }
 
-        EXPRTK_EXPORT void PackageIO_Destroy(io_package_t *io_package) {
+        EXPRTK_EXPORT("PackageIO_Destroy") void PackageIO_Destroy(io_package_t *io_package) {
             delete io_package;
             fflush(NULL);
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddPackageIO(symbol_table_t *symbol_table, io_package_t *io_package)
+        EXPRTK_EXPORT("SymbolTable_AddPackageIO") bool SymbolTable_AddPackageIO(symbol_table_t *symbol_table, io_package_t *io_package)
         {
             bool ret = symbol_table->add_package(*io_package);
             fflush(NULL);
             return ret;
         }
 
-        EXPRTK_EXPORT vecops_package_t *PackageVecops_Create()
+        EXPRTK_EXPORT("PackageVecops_Create") vecops_package_t *PackageVecops_Create()
         {
             vecops_package_t *vecops_package = new vecops_package_t();
             fflush(NULL);
             return vecops_package;
         }
 
-        EXPRTK_EXPORT void PackageVecops_Destroy(vecops_package_t *vecops_package)
+        EXPRTK_EXPORT("PackageVecops_Destroy") void PackageVecops_Destroy(vecops_package_t *vecops_package)
         {
             delete vecops_package;
             fflush(NULL);
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddPackageVecops(symbol_table_t *symbol_table, vecops_package_t *vecops_package)
+        EXPRTK_EXPORT("SymbolTable_AddPackageVecops") bool SymbolTable_AddPackageVecops(symbol_table_t *symbol_table, vecops_package_t *vecops_package)
         {
             bool ret = symbol_table->add_package(*vecops_package);
             fflush(NULL);
             return ret;
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddVariable(symbol_table_t *symbol_table, const char *name_cstr, double *value)
+        EXPRTK_EXPORT("SymbolTable_AddVariable") bool SymbolTable_AddVariable(symbol_table_t *symbol_table, const char *name_cstr, double *value)
         {
             const std::string name_str(name_cstr);
             bool ret = symbol_table->add_variable(name_str, *value);
@@ -104,7 +104,7 @@ namespace exprtk
             return ret;
         }
 
-        EXPRTK_EXPORT bool SymbolTable_AddVector(symbol_table_t *symbol_table, const char *name_cstr, double *value, size_t size)
+        EXPRTK_EXPORT("SymbolTable_AddVector") bool SymbolTable_AddVector(symbol_table_t *symbol_table, const char *name_cstr, double *value, size_t size)
         {
             const std::string name_str(name_cstr);
             bool ret = symbol_table->add_vector(name_str, value, size);
@@ -112,46 +112,46 @@ namespace exprtk
             return ret;
         }
 
-        EXPRTK_EXPORT expression_t *Expression_Create()
+        EXPRTK_EXPORT("Expression_Create") expression_t *Expression_Create()
         {
             expression_t *expression = new expression_t();
             fflush(NULL);
             return expression;
         }
 
-        EXPRTK_EXPORT void Expression_Destroy(expression_t *expression)
+        EXPRTK_EXPORT("Expression_Destroy") void Expression_Destroy(expression_t *expression)
         {
             delete expression;
             fflush(NULL);
         }
 
-        EXPRTK_EXPORT void Expression_RegisterSymbolTable(expression_t *expression, symbol_table_t *symbol_table)
+        EXPRTK_EXPORT("Expression_RegisterSymbolTable") void Expression_RegisterSymbolTable(expression_t *expression, symbol_table_t *symbol_table)
         {
             expression->register_symbol_table(*symbol_table);
             fflush(NULL);
         }
 
-        EXPRTK_EXPORT double Expression_Value(expression_t *expression)
+        EXPRTK_EXPORT("Expression_Value") double Expression_Value(expression_t *expression)
         {
             double ret = expression->value();
             fflush(NULL);
             return ret;
         }
 
-        EXPRTK_EXPORT parser_t *Parser_Create()
+        EXPRTK_EXPORT("Parser_Create") parser_t *Parser_Create()
         {
             parser_t *parser = new parser_t();
             fflush(NULL);
             return parser;
         }
 
-        EXPRTK_EXPORT void Parser_Destroy(parser_t *parser)
+        EXPRTK_EXPORT("Parser_Destroy") void Parser_Destroy(parser_t *parser)
         {
             delete parser;
             fflush(NULL);
         }
 
-        EXPRTK_EXPORT bool Parser_Compile(parser_t *parser, const char *expression_cstr, expression_t *expression)
+        EXPRTK_EXPORT("Parser_Compile") bool Parser_Compile(parser_t *parser, const char *expression_cstr, expression_t *expression)
         {
             const std::string expression_str(expression_cstr);
             bool ret = parser->compile(expression_str, *expression);
@@ -159,7 +159,7 @@ namespace exprtk
             return ret;
         }
 
-        EXPRTK_EXPORT void Parser_PrintError(parser_t *parser)
+        EXPRTK_EXPORT("Parser_PrintError") void Parser_PrintError(parser_t *parser)
         {
             typedef parser_error::type error_t;
             if (parser->error_count() > 0)

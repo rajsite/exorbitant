@@ -9,11 +9,18 @@ CONFIGURATIONOPTS  := release development
 CONFIGURATION      := release
 
 ifeq ($(filter $(CONFIGURATION), $(CONFIGURATIONOPTS)),)
-$(error invalid CONFIGURATION value, CONFIGURATION $(CONFIGURATION) not supported, supported configurations are $(CONFIGURATIONOPTS))
+$(error invalid CONFIGURATION value, CONFIGURATION $(CONFIGURATION) not supported, supported options are $(CONFIGURATIONOPTS))
+endif
+
+EXECUTIONMODELOPTS := command reactor
+EXECUTIONMODEL     := command
+
+ifeq ($(filter $(EXECUTIONMODEL), $(EXECUTIONMODELOPTS)),)
+$(error invalid EXECUTIONMODEL value, EXECUTIONMODEL $(EXECUTIONMODEL) not supported, supported options are $(EXECUTIONMODELOPTS))
 endif
 
 COMPILER           := wasi-sdk/bin/clang++
-BASE_OPTIONS       := --sysroot=wasi-sdk/share/wasi-sysroot -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
+BASE_OPTIONS       := --sysroot=wasi-sdk/share/wasi-sysroot -mexec-model=$(EXECUTIONMODEL) -std=c++14 -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 OPTIMIZATION_OPT   := -O3
 ifeq ($(CONFIGURATION), development)
 OPTIMIZATION_OPT   := -Dexprtk_disable_enhanced_features -O0

@@ -14,7 +14,7 @@ const importObject = { wasi_snapshot_preview1: wasi.wasiImport };
 
 (async () => {
     const WebAssembly = global.WebAssembly;
-    const wasm = await WebAssembly.compile(fs.readFileSync(path.resolve(__dirname, '../../dist/exprtkcore.wasm')));
+    const wasm = await WebAssembly.compile(fs.readFileSync(path.resolve(__dirname, '../../dist/exorbitant.wasm')));
     const instance = await WebAssembly.instantiate(wasm, importObject);
 
     wasi.start(instance);

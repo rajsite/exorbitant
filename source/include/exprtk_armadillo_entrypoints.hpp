@@ -5,7 +5,7 @@
 #include <exprtk_armadillo.hpp>
 
 #ifndef EXPRTK_EXPORT
-#define EXPRTK_EXPORT extern "C" __attribute__((used))
+#define EXPRTK_EXPORT(EXPORTNAME) extern "C" __attribute__((export_name(EXPORTNAME)))
 #endif
 
 namespace exprtk
@@ -24,20 +24,20 @@ namespace exprtk
                 extern bool SymbolTable_AddPackageArmadillo(symbol_table_t *symbol_table, armadillo_package_t *armadillo_package);
             }
 
-            EXPRTK_EXPORT armadillo_package_t *PackageArmadillo_Create()
+            EXPRTK_EXPORT("PackageArmadillo_Create") armadillo_package_t *PackageArmadillo_Create()
             {
                 armadillo_package_t *armadillo_package = new armadillo_package_t();
                 fflush(NULL);
                 return armadillo_package;
             }
 
-            EXPRTK_EXPORT void PackageArmadillo_Destroy(armadillo_package_t *armadillo_package)
+            EXPRTK_EXPORT("PackageArmadillo_Destroy") void PackageArmadillo_Destroy(armadillo_package_t *armadillo_package)
             {
                 delete armadillo_package;
                 fflush(NULL);
             }
 
-            EXPRTK_EXPORT bool SymbolTable_AddPackageArmadillo(symbol_table_t *symbol_table, armadillo_package_t *armadillo_package)
+            EXPRTK_EXPORT("SymbolTable_AddPackageArmadillo") bool SymbolTable_AddPackageArmadillo(symbol_table_t *symbol_table, armadillo_package_t *armadillo_package)
             {
                 bool ret = symbol_table->add_package(*armadillo_package);
                 fflush(NULL);
